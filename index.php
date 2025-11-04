@@ -19,11 +19,11 @@
     <meta name="supported-color-schemes" content="light dark" />
 
     <link rel="preload" href="./css/adminlte.css" as="style" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="./css/font-family.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="./css/overlayscrollbars.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="./css/bootstrap-icons.min.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="./css/adminlte.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="./css/apexcharts.css" crossorigin="anonymous" />
   </head>
 
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -525,13 +525,13 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <script src="../js/adminlte.js"></script>
+    <script src="./js/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
+    <script src="./js/popper.min.js" crossorigin="anonymous"></script>
+    <script src="./js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="./js/adminlte.js"></script>
 
     <!-- ApexCharts -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.min.js" crossorigin="anonymous"></script>
+    <script src="./js/apexcharts.min.js" crossorigin="anonymous"></script>
     <script>
       const sales_chart_options = {
         series: [
