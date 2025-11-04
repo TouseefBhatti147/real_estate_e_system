@@ -3,19 +3,12 @@
    =========================== */
 :root {
     --color-primary: #f1a501;
-    /* Main accent color (buttons, icons, highlights) */
     --color-dark: #181e4b;
-    /* Main text color */
     --color-light: #5e6282;
-    /* Secondary text color */
     --color-bg: #fffbe6;
-    /* Hero section background */
     --color-bg-light: #fffaf5;
-    /* Light background sections */
     --color-bg-subtle: #f8f9ff;
-    /* Subscribe & footer background */
     --color-white: #ffffff;
-    /* Pure white */
     --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
@@ -24,6 +17,7 @@
    =========================== */
 body {
     color: var(--color-dark);
+    font-family: "Poppins", sans-serif;
 }
 
 .navbar {
@@ -240,16 +234,18 @@ footer h5 {
 }
 
 /* ===========================
-   LOGIN PAGE
+   AUTH PAGES (Login & Sign Up)
    =========================== */
 .login-container {
     display: flex;
     height: 100vh;
 }
 
+/* ----- Shared Left Side (Background) ----- */
 .login-left {
     flex: 1;
-    background-color: var(--color-primary);
+    background: url("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80") no-repeat center center;
+    background-size: cover;
     color: var(--color-white);
     display: flex;
     flex-direction: column;
@@ -257,21 +253,33 @@ footer h5 {
     align-items: center;
     padding: 40px;
     text-align: center;
-    background-image: radial-gradient(circle at top left,
-            rgba(255, 255, 255, 0.15),
-            transparent 70%);
+    position: relative;
+}
+
+.login-left::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1;
+}
+
+.login-left h1,
+.login-left p {
+    position: relative;
+    z-index: 2;
 }
 
 .login-left h1 {
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 700;
-    margin-top: 10px;
 }
 
 .login-left span {
-    color: var(--color-dark);
+    color: var(--color-primary);
 }
 
+/* ----- Shared Right Side ----- */
 .login-right {
     flex: 1;
     background-color: var(--color-white);
@@ -281,17 +289,23 @@ footer h5 {
     padding: 40px;
 }
 
-.login-box {
+/* ----- Login Form Box ----- */
+.login-box,
+.signup-box {
     width: 100%;
-    max-width: 380px;
+    max-width: 400px;
+    background: var(--color-white);
+    border-radius: 12px;
 }
 
-.login-box h3 {
+.login-box h3,
+.signup-box h3 {
     font-weight: 700;
     margin-bottom: 25px;
     color: var(--color-dark);
 }
 
+/* ----- Form Elements ----- */
 .form-control {
     border-radius: 8px;
     padding: 0.75rem 1rem;
@@ -311,6 +325,7 @@ footer h5 {
     font-weight: 600;
     width: 100%;
     color: var(--color-white);
+    transition: background-color 0.3s ease;
 }
 
 .btn-primary:hover {
@@ -321,16 +336,25 @@ footer h5 {
     font-size: 0.9rem;
 }
 
+/* ----- Sign Up Page Variants ----- */
+.signup-left {
+    background: url("https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80") no-repeat center center;
+    background-size: cover;
+}
+
+.signup-left::before {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* Responsive */
 @media (max-width: 768px) {
     .login-container {
         flex-direction: column;
     }
 
-    .login-left {
-        display: none;
-    }
-
-    .login-right {
-        flex: 1;
+    .login-left,
+    .signup-left {
+        height: 250px;
+        background-position: center;
     }
 }

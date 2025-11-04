@@ -2,17 +2,16 @@
 <html lang="en">
 <head>
     <title>Login | Real State</title>
-
-   <?php require("header.php");?>
-
+    <?php require("header.php");?>
+  
 </head>
 
 <body>
-  <div class="login-container">
-    <!-- Left Side -->
+  <div class="login-container d-flex">
+    <!-- Left Side (with background image) -->
     <div class="login-left">
-       <h1>Welcome to <br><span>Real State</span></h1>
-      <p class="mt-3" style="max-width: 300px;">Buy, sell, or rent properties with ease — trusted by thousands of customers.</p>
+      <h1>Welcome to <br><span>Real State</span></h1>
+      <p class="mt-3" style="max-width: 320px;">Buy, sell, or rent properties with ease — trusted by thousands of customers.</p>
     </div>
 
     <!-- Right Side -->
@@ -37,7 +36,9 @@
           </div>
           <button type="submit" class="btn btn-primary">Login</button>
         </form>
-        <p class="mt-4 text-center text-muted">Don’t have an account? <a href="#" class="text-decoration-none" style="color: var(--color-primary); font-weight: 600;">Sign Up</a></p>
+        <p class="mt-4 text-center text-muted">Don’t have an account?
+          <a href="#" class="text-decoration-none" style="color: var(--color-primary); font-weight: 600;">Sign Up</a>
+        </p>
       </div>
     </div>
   </div>

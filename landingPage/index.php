@@ -22,8 +22,8 @@
           <li class="nav-item"><a class="nav-link" href="#">Hotels</a></li>
           <li class="nav-item"><a class="nav-link" href="#">Flights</a></li>
           <li class="nav-item"><a class="nav-link" href="#">Bookings</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Login</a></li>
-          <li class="nav-item ms-3"><a class="btn btn-sm" href="#">Sign Up</a></li>
+          <li class="nav-item"><a class="nav-link" href="login.php">Login</a></li>
+          <li class="nav-item ms-3"><a class="btn btn-sm" href="signup.php">Sign Up</a></li>
         </ul>
       </div>
     </div>
