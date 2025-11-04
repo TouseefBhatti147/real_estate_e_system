@@ -1,4 +1,4 @@
-   <nav class="app-header navbar navbar-expand bg-body">
+<nav class="app-header navbar navbar-expand bg-body">
         <div class="container-fluid">
           <ul class="navbar-nav">
             <li class="nav-item">
@@ -32,22 +32,60 @@
                 <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
               </a>
             </li>
+
+            <!-- --- USER MENU (UPDATED) --- -->
             <li class="nav-item dropdown user-menu">
               <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                 <img src="assets/img/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="User Image" />
-                <span class="d-none d-md-inline">Jasim Haider</span>
+                
+                <!-- Display Logged-in User's Full Name -->
+                <span class="d-none d-md-inline">
+                    <?php 
+                        // **FIX: Ensure session is started for this include file to read $_SESSION**
+                        if (session_status() == PHP_SESSION_NONE) {
+                            session_start();
+                        }
+                        
+                        // Assuming $_SESSION['user_array'] is set and contains user details
+                        if (isset($_SESSION['user_array'])) {
+                            $user = $_SESSION['user_array'];
+                            echo htmlspecialchars($user['firstname'] . ' ' . $user['lastname']);
+                        } else {
+                            echo "Guest User";
+                        }
+                    ?>
+                </span>
               </a>
               <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <li class="user-header text-bg-primary">
                   <img src="assets/img/user2-160x160.jpg" class="rounded-circle shadow" alt="User Image" />
-                  <p>Jasim Haider Web Developer<small>Member since Oct. 2025</small></p>
+                  <p>
+                    <!-- Display Logged-in User's Full Name and Role/Info -->
+                    <?php 
+                        // **FIX: Ensure session is started for this include file to read $_SESSION**
+                        if (session_status() == PHP_SESSION_NONE) {
+                            session_start();
+                        }
+                        
+                        if (isset($_SESSION['user_array'])) {
+                            $user = $_SESSION['user_array'];
+                            echo htmlspecialchars($user['firstname'] . ' ' . $user['lastname']);
+                            echo "<small>" . htmlspecialchars($user['role_type'] ?? 'Member') . "</small>";
+                        } else {
+                            echo "Guest User";
+                        }
+                    ?>
+                  </p>
                 </li>
                 <li class="user-footer">
                   <a href="#" class="btn btn-default btn-flat">Profile</a>
-                  <a href="#" class="btn btn-default btn-flat float-end">Sign out</a>
+                  
+                  <!-- FUNCTIONAL SIGN OUT LINK -->
+                  <a href="logout-handler.php" class="btn btn-default btn-flat float-end">Sign out</a>
                 </li>
               </ul>
             </li>
+            <!-- --- END USER MENU --- -->
           </ul>
         </div>
       </nav>

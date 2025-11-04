@@ -38,23 +38,22 @@ class User {
             $this->pdo->beginTransaction();
 
             // 1. Prepare SQL statement to find active user
-            // Uses 'password1' and 'status=1' as per your logic
-            $sql = "SELECT * FROM users WHERE username = :username AND status = 1";
+            $sql = "SELECT * FROM user WHERE username = :username AND status = 1";
             
+            // REMOVED DEBUG LINE: 'echo $sql = "SELECT * FROM users WHERE username = :username AND status = 1";exit;'
+
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(":username", $username, PDO::PARAM_STR);
             $stmt->execute();
-
             // 2. Check if username exists
             if ($stmt->rowCount() == 1) {
+                
                 if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     
                     // 3. Verify password
-                    // Uses 'password1' column as per your logic
                     if (password_verify($password, $row["password1"])) {
                         
                         $user_id = $row["id"];
-
                         // 4. Log the successful login (as per your logic)
                         $sql_log = "INSERT INTO users_log (user_id, date_time) VALUES (:user_id, CURRENT_TIMESTAMP())";
                         $stmt_log = $this->pdo->prepare($sql_log);
@@ -97,7 +96,6 @@ class User {
             }
             
             // If username not found or password mismatch, roll back
-            // (though nothing was committed yet, it's good practice)
             $this->pdo->rollBack();
             return false;
 
@@ -141,9 +139,9 @@ class User {
         }
         $_SESSION = array();
         session_destroy();
-        header("location: login.php");
+        // 🛑 PROBLEM LINE IS HERE
+        header("location: login.php"); // <--- This needs to be 'login.php'
         exit;
     }
 }
 ?>
-
