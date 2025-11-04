@@ -1,114 +1,15 @@
 <?php
+// --- PHP Session Block ---
 // Start the session to manage user login state
 session_start();
 
 // If the user is already logged in, redirect them to the dashboard
 if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
-    header("location: index.php");
+    header("location: index.php"); // Assuming your main dashboard is index.php
     exit;
 }
-
-// Include config file (for database connection)
-// require_once "config.php"; // Uncomment this when you have your config file
-
-// Define variables and initialize with empty values
-$username = $password = "";
-$login_err = "";
-
-// Processing form data when form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    // Check if username is empty
-    if (empty(trim($_POST["username"]))) {
-        $login_err = "Please enter username.";
-    } else {
-        $username = trim($_POST["username"]);
-    }
-    
-    // Check if password is empty
-    if (empty(trim($_POST["password"]))) {
-        $login_err = "Please enter your password.";
-    } else {
-        $password = trim($_POST["password"]);
-    }
-    
-    // Validate credentials
-    if (empty($login_err)) {
-        
-        /*
-        // --- PROFESSIONAL DATABASE VALIDATION (template) ---
-        // This is the professional structure you should implement.
-        // Assumes you have a PDO connection object named $pdo in config.php
-
-        // 1. Prepare SQL statement to prevent SQL injection
-        $sql = "SELECT id, username, password_hash FROM users WHERE username = :username";
-        
-        if ($stmt = $pdo->prepare($sql)) {
-            // 2. Bind variables
-            $stmt->bindParam(":username", $param_username, PDO::PARAM_STR);
-            $param_username = trim($_POST["username"]);
-            
-            // 3. Attempt to execute
-            if ($stmt->execute()) {
-                // 4. Check if username exists
-                if ($stmt->rowCount() == 1) {
-                    if ($row = $stmt->fetch()) {
-                        $id = $row["id"];
-                        $username = $row["username"];
-                        $hashed_password = $row["password_hash"];
-                        
-                        // 5. Verify password using password_verify()
-                        if (password_verify($password, $hashed_password)) {
-                            // Password is correct.
-                            // Session was already started at the top of the file.
-                            
-                            // Store data in session variables
-                            $_SESSION["loggedin"] = true;
-                            $_SESSION["id"] = $id;
-                            $_SESSION["username"] = $username;                            
-                            
-                            // Redirect user to dashboard page
-                            header("location: index.php");
-                        } else {
-                            // Password is not valid
-                            $login_err = "Invalid username or password.";
-                        }
-                    }
-                } else {
-                    // Username doesn't exist
-                    $login_err = "Invalid username or password.";
-                }
-            } else {
-                $login_err = "Oops! Something went wrong. Please try again later.";
-            }
-
-            // Close statement
-            unset($stmt);
-        }
-        // Close connection
-        unset($pdo);
-        */
-
-        // --- TEMPORARY PLACEHOLDER LOGIC (Remove this block when DB is ready) ---
-        // Kept for immediate testing (admin/password)
-        if ($username == "admin" && $password == "password") {
-            // Store data in session variables
-            $_SESSION["loggedin"] = true;
-            $_SESSION["id"] = 1; // Example user ID
-            $_SESSION["username"] = $username;                            
-            
-            // Redirect user to dashboard page
-            header("location: index.php");
-        } else {
-            // Password is not valid, display a generic error message
-            $login_err = "Invalid username or password.";
-        }
-        // --- END TEMPORARY LOGIC ---
-
-    }
-}
+// --- End of PHP Block ---
 ?>
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -120,20 +21,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
     <meta name="title" content="Admin | Login" />
 
-    <!-- These links are from your index.php to maintain style consistency -->
+    <!-- Styles from your edit_project.php example -->
     <link rel="preload" href="./css/adminlte.css" as="style" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+      crossorigin="anonymous"
+      media="print"
+      onload="this.media='all'"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="./css/adminlte.css" />
+    <!-- Note: We use ./css/adminlte.css assuming login.php is in the root. 
+         Adjust path if needed -->
 </head>
 
-<!-- Add .login-page class to the body -->
+<!-- 
+  For a login page, we use 'login-page' class on the body
+  instead of the full dashboard layout.
+-->
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary login-page">
 
     <div class="login-box">
         <div class="login-logo">
-            <!-- Logo added based on user request -->
+            <!-- Assuming logo is in assets/img/logo.jpg relative to root -->
             <img src="assets/img/logo.jpg" alt="Real Estate E-System Logo" style="width: 150px; height: 150px; margin-bottom: 10px; border-radius: 50%; object-fit: cover;">
             <br>
             <a href="index.php"><b>Real Estate</b> E-System</a>
@@ -143,21 +63,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Sign in to start your session</p>
 
-                <?php 
-                if(!empty($login_err)){
-                    echo '<div class="alert alert-danger">' . $login_err . '</div>';
-                }
-                ?>
+                <!-- Feedback area, similar to 'apiResponse' in your example -->
+                <div id="loginError" class="alert" style="display: none;"></div>
 
-                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                <!-- 
+                  Form ID is 'loginForm'.
+                  We prevent default submission and use AJAX.
+                -->
+                <form id="loginForm" method="POST">
                     <div class="input-group mb-3">
-                        <input type="text" name="username" class="form-control" placeholder="Username" value="<?php echo htmlspecialchars($username); ?>">
+                        <input type="text" id="username" name="username" class="form-control" placeholder="Username" required>
                         <div class="input-group-text">
                             <span class="bi bi-person-fill"></span>
                         </div>
                     </div>
                     <div class="input-group mb-3">
-                        <input type="password" name="password" class="form-control" placeholder="Password">
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
                         <div class="input-group-text">
                             <span class="bi bi-lock-fill"></span>
                         </div>
@@ -174,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <!-- /.col -->
                         <div class="col-4">
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">Sign In</button>
+                                <button type="submit" id="loginButton" class="btn btn-primary">Sign In</button>
                             </div>
                         </div>
                         <!-- /.col -->
@@ -182,6 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </form>
 
                 <p class="mb-1 mt-3">
+                    <!-- Update these links if your paths are different -->
                     <a href="forgot-password.php">I forgot my password</a>
                 </p>
                 <p class="mb-0">
@@ -193,15 +115,89 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
     <!-- /.login-box -->
 
-    <!-- Scripts -->
-    <!-- Note: Only include scripts needed for the login page, if any.
-         Bootstrap JS is good for components, but may not be strictly necessary
-         for a simple form. Included for consistency. -->
+    <!-- Scripts from your edit_project.php example -->
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
-    <script src="../js/adminlte.js"></script>
+    <!-- Adjust path to adminlte.js if needed -->
+    <script src="./js/adminlte.js"></script>
 
+    <!-- AJAX Form Submission Script (Pattern from your example) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('loginForm');
+            const loginButton = document.getElementById('loginButton');
+            const loginError = document.getElementById('loginError');
+
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Stop default form submission
+
+                // Show loading state
+                setLoading(true);
+                
+                const formData = new FormData(this);
+
+                // Send data to the AJAX handler
+                // Create this file at 'ajax/ajax_login_handler.php'
+                fetch('users/ajax_login_handler.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.indexOf("application/json") !== -1) {
+                        return response.json();
+                    } else {
+                        return response.text().then(text => {
+                            throw new Error("Server did not return JSON. Response: " + text);
+                        });
+                    }
+                })
+                .then(result => {
+                    if (result.success) {
+                        // Success! Show success and redirect
+                        showApiResponse(result.message, true);
+                        setTimeout(() => {
+                            window.location.href = "index.php"; // Redirect to dashboard
+                        }, 1000);
+                    } else {
+                        // Failed login
+                        showApiResponse(result.message, false);
+                        setLoading(false);
+                    }
+                })
+                .catch(err => {
+                    console.error('Submit Error:', err);
+                    showApiResponse('An error occurred: ' + err.message, false);
+                    setLoading(false);
+                });
+            });
+
+            // --- Helper Functions ---
+            function setLoading(isLoading) {
+                if (isLoading) {
+                    loginButton.disabled = true;
+                    loginButton.innerHTML = `
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Signing In...
+                    `;
+                } else {
+                    loginButton.disabled = false;
+                    loginButton.innerHTML = "Sign In";
+                }
+            }
+            
+            function showApiResponse(message, isSuccess) {
+                loginError.textContent = message;
+                loginError.style.display = 'block';
+                if (isSuccess) {
+                    loginError.className = 'alert alert-success';
+                } else {
+                    loginError.className = 'alert alert-danger';
+                }
+            }
+        });
+    </script>
 </body>
 </html>
 
