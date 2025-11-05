@@ -10,8 +10,6 @@
 require_once 'classes/User.php';
 
 // Call the static logout method, which handles session destruction and redirection to login.php.
+// The session_start() call is handled safely inside User::logout().
 User::logout();
-
-// Exit is included in User::logout(), but added here for safety
-exit;
-?>
+// Note: Closing PHP tag removed to prevent accidental trailing whitespace.
