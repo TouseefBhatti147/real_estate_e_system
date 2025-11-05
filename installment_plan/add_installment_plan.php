@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -319,4 +320,3 @@
     <script src="../js/adminlte.js"></script>
   </body>
 </html>
-

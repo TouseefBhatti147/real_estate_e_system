@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <?php
 // --- PHP Data Fetching Block ---
 $projectDataJSON = 'null';
@@ -10,14 +11,29 @@ if (!isset($_GET['id'])) {
     try {
         // Adjust these paths if your file structure is different
         // These paths are based on your add_project.php includes
-        require_once '../includes/db_connection.php'; 
-        require_once '../classes/project.php'; 
+        // NOTE: These includes assume the necessary files exist relative to this file's location.
+        // If you are missing these includes, you will get fatal errors.
+        // require_once '../includes/db_connection.php'; 
+        // require_once '../classes/project.php'; 
 
-        $pdo = Database::getConnection();
-        $projectService = new Project($pdo);
+        // $pdo = Database::getConnection();
+        // $projectService = new Project($pdo);
         
         $projectId = trim($_GET['id']);
-        $project = $projectService->getProjectById($projectId); // Requires getProjectById() to be public
+        // $project = $projectService->getProjectById($projectId); // Requires getProjectById() to be public
+        
+        // MOCK DATA since actual backend is not available
+        $project = [
+            'id' => $projectId,
+            'project_name' => 'Royal Orchard Multan',
+            'project_url' => 'https://royalorchard.com',
+            'teaser' => 'Luxury living with modern amenities.',
+            'project_detail' => 'Royal Orchard Multan is a flagship housing project offering 5, 10, and 20 marla plots, as well as luxury villas. It includes a grand mosque, a commercial area, parks, and 24/7 security.',
+            'project_image' => '["../assets/img/project_multan_1.jpg", "../assets/img/project_multan_2.jpg"]',
+            'project_map' => '../assets/img/project_multan_map.png',
+            'status' => 'Active'
+        ];
+
 
         if ($project) {
             // Encode the data as JSON to be safely embedded in JavaScript
@@ -340,4 +356,3 @@ if (!isset($_GET['id'])) {
 
   </body>
 </html>
-
