@@ -32,12 +32,7 @@
               <p>Projects</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="projects_upcoming.php" class="nav-link">
-              <i class="nav-icon bi bi-circle"></i>
-              <p>Upcoming Projects</p>
-            </a>
-          </li>
+      
           <li class="nav-item">
             <a href="sectors.php" class="nav-link">
               <i class="nav-icon bi bi-circle"></i>
@@ -65,38 +60,7 @@
         </ul>
       </li>
 
-      <!-- Building Control -->
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          <i class="nav-icon bi bi-check-square-fill"></i>
-          <p>
-            Building Control
-            <i class="nav-arrow bi bi-chevron-right"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="possession_request.php" class="nav-link">
-              <i class="nav-icon bi bi-circle"></i>
-              <p>Possession Request</p>
-              <span class="nav-badge badge text-bg-info me-3">5,200</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="possession_list.php" class="nav-link">
-              <i class="nav-icon bi bi-circle"></i>
-              <p>Possession List</p>
-              <span class="nav-badge badge text-bg-info me-3">92,050</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="possession_reports.php" class="nav-link">
-              <i class="nav-icon bi bi-circle"></i>
-              <p>Possession Reports</p>
-            </a>
-          </li>
-        </ul>
-      </li>
+ 
 
       <!-- Finance & Sales -->
       <li class="nav-item">
@@ -159,13 +123,7 @@
               <span class="nav-badge badge text-bg-success me-3"></span>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="land_owners.php" class="nav-link">
-              <i class="nav-icon bi bi-circle"></i>
-              <p>Land Owner Directory</p>
-              <span class="nav-badge badge text-bg-warning me-3"></span>
-            </a>
-          </li>
+       
           <li class="nav-item">
             <a href="users.php" class="nav-link">
               <i class="nav-icon bi bi-circle"></i>
@@ -202,36 +160,7 @@
         </ul>
       </li>
       
-      <!-- Map Management -->
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          <i class="nav-icon bi bi-map-fill"></i>
-          <p>
-            Map Management
-            <i class="nav-arrow bi bi-chevron-right"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="view_map.php" class="nav-link">
-              <i class="nav-icon bi bi-circle"></i>
-              <p>View Map</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="developer_view.php" class="nav-link">
-              <i class="nav-icon bi bi-circle"></i>
-              <p>Developer View</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="create_map.php" class="nav-link">
-              <i class="nav-icon bi bi-circle"></i>
-              <p>Create Map</p>
-            </a>
-          </li>
-        </ul>
-      </li>
+     
       
       <!-- Media & Website -->
       <li class="nav-item">
@@ -289,30 +218,13 @@
               <p>Security</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="balloting.php" class="nav-link">
-              <i class="nav-icon bi bi-circle"></i>
-              <p>Balloting</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="broadcast.php" class="nav-link">
-              <i class="nav-icon bi bi-circle"></i>
-              <p>Broadcast</p>
-            </a>
-          </li>
+       
         </ul>
       </li>
       
       <!-- Settings -->
       <li class="nav-item">
-        <a href="#" class="nav-link">
-          <i class="nav-icon bi bi-gear-fill"></i>
-          <p>
-            Settings
-            <i class="nav-arrow bi bi-chevron-right"></i>
-          </p>
-        </a>
+     
         <ul class="nav nav-treeview">
           <li class="nav-item">
             <a href="pages.php" class="nav-link">
@@ -326,12 +238,7 @@
               <p>Manage Country</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="splash_screen.php" class="nav-link">
-              <i class="nav-icon bi bi-circle"></i>
-              <p>Splash Screen</p>
-            </a>
-          </li>
+       
         </ul>
       </li>
 
