@@ -101,46 +101,7 @@
       </div>
       <!--end::Report Section-->
 
-      <!--start::BCD Section-->
-      <div class="col-12 mt-4">
-        <div class="callout callout-info">
-          Building Control Management
-        </div>
-      </div>
-      <hr />
-
-      <div class="row">
-        <div class="col-md-3">
-          <div class="info-box mb-3 text-bg-warning">
-            <span class="info-box-icon"><i class="bi bi-tag-fill"></i></span>
-            <div class="info-box-content">
-              <span class="info-box-text">Possession Request</span>
-              <span class="info-box-number">5,200</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-3">
-          <div class="info-box mb-3 text-bg-success">
-            <span class="info-box-icon"><i class="bi bi-heart-fill"></i></span>
-            <div class="info-box-content">
-              <span class="info-box-text">Possession List</span>
-              <span class="info-box-number">92,050</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-3">
-          <div class="info-box mb-3 text-bg-danger">
-            <span class="info-box-icon"><i class="bi bi-cloud-download"></i></span>
-            <div class="info-box-content">
-              <span class="info-box-text">Possession Reports</span>
-              <span class="info-box-number">114,381</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!--end::BCD Section-->
+    
 <!--start:Add New section-->
 <div class="col-12 mt-4">
   <div class="callout callout-info">
@@ -174,28 +135,9 @@
     </a>
   </div>
 
-  <div class="col-md-3">
-    <a href="projects_upcomming/projects_upcomming.php">
-    <div class="info-box mb-3 text-bg-success">
-      <span class="info-box-icon"><i class="bi bi-calendar-event-fill"></i></span>
-      <div class="info-box-content">
-        <span class="info-box-text">Upcoming Projects</span>
-      </div>
-    </div>
-</a>
-  </div>
 
-  <div class="col-md-3">
-        <a href="banks/banks.php">
 
-    <div class="info-box mb-3 text-bg-info">
-      <span class="info-box-icon"><i class="bi bi-bank"></i></span>
-      <div class="info-box-content">
-        <span class="info-box-text">Banks</span>
-      </div>
-    </div>
-</a>
-  </div>
+
 
 
 
@@ -281,18 +223,6 @@
  
 
   <div class="col-md-3">
-            <a href="splash_screen/splash_screen.php">
-
-    <div class="info-box mb-3 text-bg-success">
-      <span class="info-box-icon"><i class="bi bi-phone-fill"></i></span>
-      <div class="info-box-content">
-        <span class="info-box-text">Splash Screen</span>
-      </div>
-    </div>
-</a>
-  </div>
-
-  <div class="col-md-3">
                 <a href="sliders/sliders.php">
 
     <div class="info-box mb-3 text-bg-warning">
@@ -329,17 +259,6 @@
 </a>
   </div>
 
-  <div class="col-md-3">
-        <a href="settings/settings.php">
-
-    <div class="info-box mb-3 text-bg-dark">
-      <span class="info-box-icon"><i class="bi bi-gear-fill"></i></span>
-      <div class="info-box-content">
-        <span class="info-box-text">Setting</span>
-      </div>
-    </div>
-</a>
-  </div>
 
  
 
@@ -383,17 +302,6 @@
 <hr />
 
 <div class="row">
-  <div class="col-md-3">
-        <a href="land_owner/land_owner.php">
-    <div class="info-box mb-3 text-bg-warning">
-      <span class="info-box-icon"><i class="bi bi-person-lines-fill"></i></span>
-      <div class="info-box-content">
-        <span class="info-box-text">Land Owner Directory</span>
-        <span class="info-box-number">15</span>
-      </div>
-    </div>
-</a>
-  </div>
 
   <div class="col-md-3">
             <a href="members/members.php">
@@ -432,32 +340,11 @@
 <hr />
 
 <div class="row">
-  <div class="col-md-3">
-    <div class="info-box mb-3 text-bg-primary">
-      <span class="info-box-icon"><i class="bi bi-balloon-fill"></i></span>
-      <div class="info-box-content">
-        <span class="info-box-text">Balloting</span>
-      </div>
-    </div>
-  </div>
 
-  <div class="col-md-3">
-    <div class="info-box mb-3 text-bg-success">
-      <span class="info-box-icon"><i class="bi bi-bar-chart-line-fill"></i></span>
-      <div class="info-box-content">
-        <span class="info-box-text">Reporting</span>
-      </div>
-    </div>
-  </div>
 
-  <div class="col-md-3">
-    <div class="info-box mb-3 text-bg-danger">
-      <span class="info-box-icon"><i class="bi bi-shield-lock-fill"></i></span>
-      <div class="info-box-content">
-        <span class="info-box-text">Security</span>
-      </div>
-    </div>
-  </div>
+
+
+
 
   <div class="col-md-3">
     <div class="info-box mb-3 text-bg-warning">
@@ -468,15 +355,7 @@
     </div>
   </div>
 
-  <div class="col-md-3">
-    <div class="info-box mb-3 text-bg-info">
-      <span class="info-box-icon"><i class="bi bi-cash-coin"></i></span>
-      <div class="info-box-content">
-        <span class="info-box-text">Recovery System</span>
-      </div>
-    </div>
-  </div>
-</div>
+
 <!--end:Security, Reporting, Balloting, Recovery section-->
 
 <!--start:Land and Society Map Management section-->
@@ -495,24 +374,7 @@
     </div>
   </div>
 
-  <div class="col-md-3">
-    <div class="info-box mb-3 text-bg-warning">
-      <span class="info-box-icon"><i class="bi bi-building"></i></span>
-      <div class="info-box-content">
-        <span class="info-box-text">Developer View</span>
-      </div>
-    </div>
-  </div>
 
-  <div class="col-md-3">
-    <div class="info-box mb-3 text-bg-danger">
-      <span class="info-box-icon"><i class="bi bi-map"></i></span>
-      <div class="info-box-content">
-        <span class="info-box-text">Create Map</span>
-      </div>
-    </div>
-  </div>
-</div>
 <!--end:Land and Society Map Management section-->
 
     </div>
