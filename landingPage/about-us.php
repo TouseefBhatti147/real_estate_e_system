@@ -10,7 +10,26 @@
 
 <body>
   <!-- Navbar -->
-  <?php $navbarClass = "navbar-absolute"; include("navbar.php");  ?>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand fw-bold fs-3" href="#">Real Estate E-System 
+</a>
+      <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="menu">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link" href="#">Destinations</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Hotels</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Flights</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Bookings</a></li>
+          <li class="nav-item"><a class="nav-link" href="login.php">Login</a></li>
+          <li class="nav-item ms-3"><a class="btn btn-sm" href="signup.php">Sign Up</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
   <!-- Hero Section -->
   <section class="hero">
       <img class="img" src="./assets/img/Decore.svg" alt="">
@@ -160,7 +179,68 @@
     </div>
   </section>
 
-   <?php require("footer.php");?>
+  <!-- Footer -->
+<footer class="py-5 bg-light">
+  <div class="container">
+    <div class="row align-items-start text-center text-md-start">
+      <!-- Brand -->
+      <div class="col-md-3 mb-4">
+        <h3 class="fw-bold text-dark">Real Estate E-System 
+<span class="text-danger">.</span></h3>
+        <p class="text-muted">Find your dream property — homes, apartments, and investments made simple.</p>
+      </div>
+
+      <!-- Company -->
+      <div class="col-md-2 mb-4">
+        <h6 class="fw-bold mb-3">Company</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-muted text-decoration-none">About</a></li>
+          <li><a href="#" class="text-muted text-decoration-none">Careers</a></li>
+          <li><a href="#" class="text-muted text-decoration-none">Our Agents</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="col-md-2 mb-4">
+        <h6 class="fw-bold mb-3">Contact</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-muted text-decoration-none">Help / FAQ</a></li>
+          <li><a href="#" class="text-muted text-decoration-none">Press</a></li>
+          <li><a href="#" class="text-muted text-decoration-none">Support</a></li>
+        </ul>
+      </div>
+
+      <!-- More -->
+      <div class="col-md-2 mb-4">
+        <h6 class="fw-bold mb-3">More</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-muted text-decoration-none">Property Tips</a></li>
+          <li><a href="#" class="text-muted text-decoration-none">Mortgage Guide</a></li>
+          <li><a href="#" class="text-muted text-decoration-none">Investing</a></li>
+        </ul>
+      </div>
+
+      <!-- Social & App Links -->
+      <div class="col-md-3 mb-4 text-center text-md-start">
+        <div class="mb-3">
+          <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle me-2"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle me-2"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle"><i class="bi bi-twitter"></i></a>
+        </div>
+        <p class="fw-semibold mb-2">Download our app</p>
+        <div class="d-flex justify-content-center justify-content-md-start">
+          <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" height="40" class="me-2"></a>
+          <a href="#"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" height="40"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <p class="text-muted small mb-0">© 2025 Real Estate E-System. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
    <?php require("script.php");?>
 </body>
 </html>
