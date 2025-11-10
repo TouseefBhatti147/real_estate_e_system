@@ -183,7 +183,7 @@
         tableMessage.style.display = 'block';
 
         // Fetch the project list from our new API
-        fetch('api_list_projects.php')
+        fetch('api_projects.php')
           .then(response => response.json())
           .then(result => {
             // Clear the "Loading..." row
@@ -254,7 +254,7 @@
           formData.append('id', id);
 
           // Call the delete API
-          fetch('api_delete_project.php', {
+          fetch('api_projects.php', {
             method: 'POST',
             body: formData
           })

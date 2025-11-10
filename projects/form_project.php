@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const imagesPreview = document.getElementById('currentImagesPreview');
         imagesPreview.innerHTML='';
         try{
-            const images = JSON.parse(data.project_images);
+            const images = JSON.parse(data.project_image);
             if(images && images.length>0){
                 images.forEach(img=>{imagesPreview.innerHTML+=`<img src="${img}" class="preview-image">`;});
             } else imagesPreview.innerHTML=`<p class="text-muted">No current images.</p>`;
