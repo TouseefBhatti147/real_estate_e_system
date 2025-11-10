@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Sign Up | Real State</title>
+    <title>Sign Up | Real Estate E-System 
+</title>
     <?php require("header.php");?>
   
 </head>
@@ -10,7 +11,8 @@
   <div class="login-container">
     <!-- Left Side (Background Image) -->
     <div class="login-left">
-      <h1>Join <br><span>Real State</span></h1>
+      <h1>Join <br>  <span>Real Estate E-System 
+</span>  </h1>
       <p class="mt-3" style="max-width: 320px;">Create your free account and start exploring thousands of properties across the country.</p>
     </div>
 
