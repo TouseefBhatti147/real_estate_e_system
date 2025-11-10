@@ -11,8 +11,8 @@
   <div class="login-container">
     <!-- Left Side (Background Image) -->
     <div class="login-left">
-      <h1>Join <br> <a href="index.php"><span>Real Estate E-System 
-</span></a> </h1>
+      <h1>Join <br>  <span>Real Estate E-System 
+</span>  </h1>
       <p class="mt-3" style="max-width: 320px;">Create your free account and start exploring thousands of properties across the country.</p>
     </div>
 
