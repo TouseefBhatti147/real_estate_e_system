@@ -211,8 +211,7 @@
                   <td>${project.create_date || 'N/A'}</td>
                   <td>
                     <a href="view_project.php?id=${project.id}" class="btn btn-sm btn-info me-1" title="View"><i class="bi bi-info-circle-fill"></i></a>
-                    <a href="update_project.php?id=${project.id}" class="btn btn-sm btn-warning me-1" title="Edit"><i class="bi bi-pencil-square"></i></a>
-                    <a href="#" class="btn btn-sm btn-danger" title="Delete" onclick="deleteProject(${project.id})"><i class="bi bi-trash-fill"></i></a>
+                    <a href="form_project.php?id=${project.id}" class="btn btn-sm btn-warning me-1" title="Edit"><i class="bi bi-pencil-square"></i></a>                    <a href="#" class="btn btn-sm btn-danger" title="Delete" onclick="deleteProject(${project.id})"><i class="bi bi-trash-fill"></i></a>
                   </td>
                 `;
                 

@@ -8,6 +8,7 @@ class Project {
 
     // --- Add Project ---
     public function addProject($data){
+        // ... (existing code for addProject) ...
         $required = ['project_name','project_url','teaser','project_details','status'];
         foreach($required as $field){
             if(!isset($data[$field]) || $data[$field]===''){
@@ -53,6 +54,7 @@ class Project {
 
     // --- Update Project ---
     public function updateProject($data){
+        // ... (existing code for updateProject) ...
         if(empty($data['id'])){
             return ['success'=>false, 'message'=>"Project ID missing"];
         }
@@ -75,6 +77,9 @@ class Project {
             $allImages = array_merge($existingImages, $newImages);
             $data['project_images'] = json_encode($allImages);
         } else {
+            // NOTE: The previous logic assumed if 'project_images' was NOT set in $data,
+            // it means no new images were uploaded, so it uses the existing.
+            // If the user *removed* all images, $data['project_images'] would be set to an empty JSON array '[]'.
             $data['project_images'] = json_encode($existingImages);
         }
 
@@ -125,9 +130,9 @@ class Project {
         }
     }
 
-    // --- List All Projects (NEW METHOD) ---
+    // --- List All Projects ---
     public function listProjects(){
-        // Select only the columns needed for the main project list table
+        // ... (existing code for listProjects) ...
         $sql = "SELECT id, project_name, teaser, project_url, create_date FROM projects ORDER BY create_date DESC";
         $result = $this->conn->query($sql);
         
@@ -137,13 +142,66 @@ class Project {
 
         $projects = [];
         while($row = $result->fetch_assoc()){
-            // The JS in projects.php expects a field named 'url' for the anchor text.
-            // We alias project_url to 'url' to match that expectation.
             $row['url'] = $row['project_url']; 
             $projects[] = $row;
         }
 
         return ['success'=>true, 'data'=>$projects];
+    }
+    
+    // --- Delete Project ---
+    public function deleteProject($id){
+        // ... (existing code for deleteProject) ...
+        if(empty($id) || !is_numeric($id)){
+            return ['success'=>false, 'message'=>"Invalid Project ID"];
+        }
+
+        $sql = "DELETE FROM projects WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        
+        if(!$stmt){
+            return ['success'=>false, 'message'=>"Prepare failed: ".$this->conn->error];
+        }
+
+        $stmt->bind_param("i", $id);
+        
+        if($stmt->execute()){
+            if($stmt->affected_rows > 0){
+                return ['success'=>true, 'message'=>'Project deleted successfully'];
+            } else {
+                return ['success'=>false, 'message'=>'Project not found or already deleted'];
+            }
+        } else {
+            return ['success'=>false, 'message'=>'Execute failed: '.$stmt->error];
+        }
+    }
+    
+    // --- Get Single Project By ID (NEW METHOD) ---
+    public function getProjectById($id){
+        if(empty($id) || !is_numeric($id)){
+            return ['success'=>false, 'message'=>"Invalid Project ID"];
+        }
+
+        // Select ALL fields for the edit form
+        $sql = "SELECT * FROM projects WHERE id = ? LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+
+        if(!$stmt){
+            return ['success'=>false, 'message'=>"Prepare failed: ".$this->conn->error];
+        }
+
+        $stmt->bind_param("i", $id);
+        
+        if($stmt->execute()){
+            $result = $stmt->get_result();
+            if($result->num_rows === 1){
+                return ['success'=>true, 'data'=>$result->fetch_assoc()];
+            } else {
+                return ['success'=>false, 'message'=>'Project not found.'];
+            }
+        } else {
+            return ['success'=>false, 'message'=>'Execute failed: '.$stmt->error];
+        }
     }
 }
 ?>

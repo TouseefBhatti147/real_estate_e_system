@@ -15,12 +15,16 @@ if ($projectId) {
         'project_name' => 'Royal Orchard Multan',
         'project_url' => 'https://royalorchard.com',
         'teaser' => 'Luxury living with modern amenities.',
-        'project_detail' => 'Royal Orchard Multan is a flagship housing project offering 5, 10, and 20 marla plots.',
-        'project_image' => '["../assets/img/project_multan_1.jpg","../assets/img/project_multan_2.jpg"]',
+        // --- FIXED: Changed 'project_detail' to 'project_details' to match HTML input ID ---
+        'project_details' => 'Royal Orchard Multan is a flagship housing project offering 5, 10, and 20 marla plots.',
+        // --- FIXED: Changed 'project_image' (singular) to 'project_images' (plural) to match JS parsing ---
+        'project_images' => '["../assets/img/project_multan_1.jpg","../assets/img/project_multan_2.jpg"]',
         'project_map' => '../assets/img/project_multan_map.png',
         'status' => 'Active'
     ];
     if ($project) {
+        // --- WARNING: In a real app, this should be an AJAX fetch to a server endpoint (e.g., api_get_project.php)
+        // NOT relying on PHP preloading mock data.
         $projectDataJSON = json_encode(['success' => true, 'data' => $project]);
     } else {
         $pageError = "Project not found for ID: " . $projectId;
@@ -96,7 +100,6 @@ $formDisabled = !empty($pageError);
 
                                 <input type="hidden" name="id" id="projectId" value="<?= htmlspecialchars($projectId ?? '') ?>">
 
-                                <!-- Project Name & URL -->
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label for="projectName" class="form-label">Project Name <span class="text-danger">*</span></label>
@@ -108,7 +111,6 @@ $formDisabled = !empty($pageError);
                                     </div>
                                 </div>
 
-                                <!-- Teaser & Status -->
                                 <div class="row mb-3">
                                     <div class="col-md-8">
                                         <label for="teaser" class="form-label">Teaser <span class="text-danger">*</span></label>
@@ -124,13 +126,11 @@ $formDisabled = !empty($pageError);
                                     </div>
                                 </div>
 
-                                <!-- Project Detail -->
                                 <div class="mb-3">
                                     <label for="projectDetail" class="form-label">Project Detail <span class="text-danger">*</span></label>
                                     <textarea class="form-control" id="project_details" name="project_details" rows="5" required <?= $formDisabled?'disabled':'' ?>></textarea>
                                 </div>
 
-                                <!-- Images -->
                                 <?php if($projectId): ?>
                                 <div class="mb-3">
                                     <label class="form-label">Current Images</label>
@@ -143,7 +143,6 @@ $formDisabled = !empty($pageError);
                                     <small class="form-text text-muted"><?= $projectId?'Leave blank to keep current images.':'Upload one or more images for the project slider.' ?></small>
                                 </div>
 
-                                <!-- Map -->
                                 <?php if($projectId): ?>
                                 <div class="mb-3">
                                     <label class="form-label">Current Map</label>
@@ -228,11 +227,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const imagesPreview = document.getElementById('currentImagesPreview');
         imagesPreview.innerHTML='';
         try{
-            const images = JSON.parse(data.project_images);
+            // This line correctly looks for 'project_images' (plural) which now matches the PHP mock data structure.
+            const images = JSON.parse(data.project_images); 
             if(images && images.length>0){
                 images.forEach(img=>{imagesPreview.innerHTML+=`<img src="${img}" class="preview-image">`;});
             } else imagesPreview.innerHTML=`<p class="text-muted">No current images.</p>`;
-        }catch(e){}
+        }catch(e){
+             console.error("Error parsing project images JSON:", e);
+        }
     }
 
     function showApiResponse(message,isSuccess){
