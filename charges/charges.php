@@ -3,211 +3,163 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Real Estate E-system - Charges List</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
-    <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
-    <meta name="title" content="Admin | Charges List" />
-    <meta name="author" content="ColorlibHQ" />
-    <meta name="description" content="Admin Dashboard..." />
-    <meta name="keywords" content="bootstrap 5, admin dashboard, accessible, WCAG" />
-    <meta name="supported-color-schemes" content="light dark" />
-
-    <link rel="preload" href="../css/adminlte.css" as="style" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
-      crossorigin="anonymous"
-      media="print"
-      onload="this.media='all'"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="../css/adminlte.css" />
+    <title>Charges List - Real Estate E-System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../css/adminlte.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
   </head>
-
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
-      <?php require("../includes/header.php");?>
-
-      <!-- Sidebar -->
+      <?php include("../includes/header.php"); ?>
       <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
         <div class="sidebar-brand">
-          <a href="..\index.php" class="brand-link">
-           
+          <a href="../index.php" class="brand-link">
             <span class="brand-text fw-light">Real Estate E-System</span>
           </a>
         </div>
         <?php include("../includes/sidebar.php"); ?>
       </aside>
 
-      <!-- Main Content -->
       <main class="app-main">
-        <!-- App Content Header -->
         <div class="app-content-header">
           <div class="container-fluid">
             <div class="row">
-              <div class="col-sm-6">
-                <h3 class="mb-0">Charges List</h3>
-              </div>
-              <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Charges List</li>
-                </ol>
+              <div class="col-sm-6"><h3>Charges List</h3></div>
+              <div class="col-sm-6 text-end">
+                <a href="form_charges.php" class="btn btn-success">Add Charges</a>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- App Content -->
         <div class="app-content">
           <div class="container-fluid">
-            <div class="row">
-              <div class="col-md-12">
-                <div class="card mb-4">
-                  <div class="card-header d-flex align-items-center">
-                    <h3 class="card-title mb-0">Charges</h3>
-                    <a href="add_charges.php" class="btn btn-success ms-auto">Add Charge</a>
-                  </div>
-                  <div class="card-body">
-                     <div class="row mb-3 g-3">
-                      <div class="col-md-4">
-                        <label for="projectSelect" class="form-label">Project:</label>
-                        <select id="projectSelect" class="form-select">
-                          <option selected>Select Project</option>
-                          <option>Royal Orchard Multan</option>
-                          <option>Royal Orchard-II, Multan</option>
-                          <option>Royal Orchard Sargodha</option>
-                          <option>Royal Orchard Sahiwal</option>
-                        </select>
-                      </div>
-                      <div class="col-md-4">
-                        <label for="searchInput" class="form-label">Search:</label>
-                        <input type="text" id="searchInput" class="form-control" placeholder="Search...">
-                      </div>
-                      <div class="col-md-4 d-flex align-items-end">
-                        <button type="button" class="btn btn-primary">Search</button>
-                      </div>
-                    </div>
-                    <table class="table table-bordered table-striped">
-                      <thead>
-                        <tr>
-                          <th>Id</th>
-                          <th>Name</th>
-                          <th>Note</th>
-                          <th>Monthly</th>
-                          <th>Total(Once)</th>
-                          <th>Project Name</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>MS Fee</td>
-                          <td>Membership Fee</td>
-                          <td>0</td>
-                          <td>10000</td>
-                          <td>Royal Orchard Multan</td>
-                          <td>
-                            <a href="update_charges.php?id=1" class="btn btn-sm btn-warning me-1"><i class="bi bi-pencil-square"></i></a>
-                            <a href="#" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i></a>
-                          </td>
-                        </tr>
-                         <tr>
-                          <td>2</td>
-                          <td>Transfer Fee</td>
-                          <td>Transfer Fee</td>
-                          <td>0</td>
-                          <td>10000</td>
-                          <td>Royal Orchard Multan</td>
-                          <td>
-                            <a href="update_charges.php?id=2" class="btn btn-sm btn-warning me-1"><i class="bi bi-pencil-square"></i></a>
-                            <a href="#" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i></a>
-                          </td>
-                        </tr>
-                         <tr>
-                          <td>3</td>
-                          <td>Prime Location - Corner (10%)</td>
-                          <td>Prime Location - Corner Plot (10%)</td>
-                          <td>0</td>
-                          <td>0</td>
-                          <td>Royal Orchard Multan</td>
-                          <td>
-                            <a href="update_charges.php?id=3" class="btn btn-sm btn-warning me-1"><i class="bi bi-pencil-square"></i></a>
-                            <a href="#" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i></a>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>4</td>
-                          <td>Prime Location - Facing Park (10%)</td>
-                          <td>Prime Location - Facing Park (10%)</td>
-                          <td>0</td>
-                          <td>0</td>
-                          <td>Royal Orchard Multan</td>
-                          <td>
-                            <a href="update_charges.php?id=4" class="btn btn-sm btn-warning me-1"><i class="bi bi-pencil-square"></i></a>
-                            <a href="#" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i></a>
-                          </td>
-                        </tr>
-                         <tr>
-                          <td>5</td>
-                          <td>Prime Location - Main Road upto 99 feet (10%)</td>
-                          <td>Prime Location - Main Road upto 99 feet (10%)</td>
-                          <td>0</td>
-                          <td>0</td>
-                          <td>Royal Orchard Multan</td>
-                          <td>
-                            <a href="update_charges.php?id=5" class="btn btn-sm btn-warning me-1"><i class="bi bi-pencil-square"></i></a>
-                            <a href="#" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i></a>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>6</td>
-                          <td>Prime Location - Main Boulevard above 100 feet (15%)</td>
-                          <td>Prime Location - Main Boulevard...</td>
-                          <td>0</td>
-                          <td>0</td>
-                          <td>Royal Orchard Multan</td>
-                          <td>
-                            <a href="update_charges.php?id=6" class="btn btn-sm btn-warning me-1"><i class="bi bi-pencil-square"></i></a>
-                            <a href="#" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i></a>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                   <div class="card-footer clearfix">
-                    <ul class="pagination pagination-sm m-0 float-end">
-                      <li class="page-item"><a class="page-link" href="#">«</a></li>
-                      <li class="page-item"><a class="page-link" href="#">1</a></li>
-                      <li class="page-item"><a class="page-link" href="#">»</a></li>
-                    </ul>
-                  </div>
-                </div>
+            <!-- Filters -->
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label class="form-label">Project</label>
+                <select id="projectFilter" class="form-select">
+                  <option value="">All Projects</option>
+                  <?php
+                  $db = new mysqli("localhost", "root", "", "rdlpk_db1");
+                  $res = $db->query("SELECT id, project_name FROM projects ORDER BY project_name ASC");
+                  while ($r = $res->fetch_assoc()) {
+                    echo "<option value='{$r['id']}'>" . htmlspecialchars($r['project_name']) . "</option>";
+                  }
+                  $db->close();
+                  ?>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Search</label>
+                <input type="text" id="searchKeyword" class="form-control" placeholder="Search by Name or Note">
+              </div>
+              <div class="col-md-4 align-self-end">
+                <button id="searchBtn" class="btn btn-primary w-100">Search</button>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="card">
+              <div class="card-body">
+                <div id="tableMessage" class="alert alert-info">Loading...</div>
+                <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Project</th>
+                      <th>Name</th>
+                      <th>Note</th>
+                      <th>Monthly</th>
+                      <th>Total</th>
+                      <th>Type</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="chargesTableBody"></tbody>
+                </table>
+                <nav><ul class="pagination justify-content-end mt-3" id="pagination"></ul></nav>
               </div>
             </div>
           </div>
         </div>
       </main>
 
-     <?php include("../includes/footer.php"); ?>
+      <?php include("../includes/footer.php"); ?>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <script src="../js/adminlte.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      loadCharges();
+
+      document.getElementById('searchBtn').addEventListener('click', () => loadCharges(1));
+
+      function loadCharges(page = 1) {
+        const search = document.getElementById('searchKeyword').value.trim();
+        const projectId = document.getElementById('projectFilter').value;
+
+        const query = new URLSearchParams({ page, search, project_id: projectId });
+
+        fetch('api_charges.php?' + query)
+          .then(res => res.json())
+          .then(result => {
+            const tbody = document.getElementById('chargesTableBody');
+            const pagination = document.getElementById('pagination');
+            const msg = document.getElementById('tableMessage');
+
+            tbody.innerHTML = '';
+            pagination.innerHTML = '';
+
+            if (result.success && result.data.length > 0) {
+              msg.style.display = 'none';
+              result.data.forEach(row => {
+                tbody.innerHTML += `
+                  <tr>
+                    <td>${row.id}</td>
+                    <td>${row.project_name || '-'}</td>
+                    <td>${row.name}</td>
+                    <td>${row.note}</td>
+                    <td>${row.monthly}</td>
+                    <td>${row.total}</td>
+                    <td>${row.type}</td>
+                    <td>
+                      <a href="form_charges.php?id=${row.id}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></a>
+                      <button class="btn btn-danger btn-sm" onclick="deleteCharge(${row.id})"><i class="bi bi-trash"></i></button>
+                    </td>
+                  </tr>`;
+              });
+
+              for (let i = 1; i <= result.pagination.total_pages; i++) {
+                pagination.innerHTML += `<li class="page-item ${i===result.pagination.current?'active':''}">
+                  <a class="page-link" href="#" onclick="loadCharges(${i})">${i}</a></li>`;
+              }
+
+            } else {
+              msg.textContent = 'No records found.';
+              msg.className = 'alert alert-secondary';
+              msg.style.display = 'block';
+            }
+          })
+          .catch(() => {
+            document.getElementById('tableMessage').textContent = 'Error loading data.';
+          });
+      }
+
+      window.deleteCharge = function(id) {
+        if (!confirm("Are you sure you want to delete this record?")) return;
+
+        const formData = new FormData();
+        formData.append('action', 'delete');
+        formData.append('id', id);
+
+        fetch('api_charges.php', { method: 'POST', body: formData })
+          .then(res => res.json())
+          .then(result => {
+            alert(result.message);
+            if (result.success) loadCharges();
+          });
+      }
+    });
+    </script>
   </body>
 </html>
