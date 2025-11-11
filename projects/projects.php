@@ -46,11 +46,7 @@
            <a href="..\index.php" class="brand-link">
 
             <!-- === ADDED LOGO BACK === -->
-            <img
-              src="./assets/img/AdminLTELogo.png"
-              alt="AdminLTE Logo"
-              class="brand-image opacity-75 shadow"
-            />
+           
             <span class="brand-text fw-light">Real Estate E-System</span>
           </a>
         </div>

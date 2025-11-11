@@ -121,7 +121,7 @@ $formDisabled = !empty($pageError);
                                     <div class="col-md-4">
                                         <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
                                         <select class="form-select" id="status" name="status" required <?= $formDisabled?'disabled':'' ?>>
-                                            <option value="" disabled selected>Select Status</option>
+                                            <option value="" disabled>Select Status</option>
                                             <option value="1">Active</option>
                                             <option value="0">inActive</option>
                                         </select>
@@ -183,73 +183,73 @@ document.addEventListener('DOMContentLoaded', () => {
     const apiResponseDiv = document.getElementById('apiResponse');
     const submitButton = document.getElementById('submitButton');
 
-    if(isUpdateMode && preloadedData && preloadedData.success && preloadedData.data){
+    if (isUpdateMode && preloadedData && preloadedData.success && preloadedData.data) {
         populateForm(preloadedData.data);
     }
 
-    form.addEventListener('submit', function(e){
+    form.addEventListener('submit', function(e) {
         e.preventDefault();
         submitButton.disabled = true;
-        submitButton.textContent = isUpdateMode?'Updating...':'Adding...';
+        submitButton.textContent = isUpdateMode ? 'Updating...' : 'Adding...';
 
         const formData = new FormData(this);
-        formData.set('action', isUpdateMode?'update':'add');
+        formData.set('action', isUpdateMode ? 'update' : 'add');
 
-        fetch('api_projects.php',{method:'POST',body:formData})
-        .then(response=>{
-            const ct = response.headers.get("content-type");
-            if(ct && ct.indexOf("application/json")!==-1) return response.json();
-            else return response.text().then(text=>{throw new Error("Server did not return JSON: "+text.substring(0,100)+"...");});
-        })
-        .then(result=>{
-            showApiResponse(result.message,result.success);
-            if(result.success){
-                if(isUpdateMode) setTimeout(()=>window.location.reload(),1500);
-                else form.reset();
+        fetch('api_projects.php', { method: 'POST', body: formData })
+        .then(response => response.json())
+        .then(result => {
+            showApiResponse(result.message, result.success);
+            if (result.success) {
+                // ✅ Redirect to project list after successful add/update
+                setTimeout(() => window.location.href = 'projects.php', 1000);
             }
         })
-        .catch(err=>{
+        .catch(err => {
             console.error(err);
-            showApiResponse('Error: '+err.message,false);
+            showApiResponse('Error: ' + err.message, false);
         })
-        .finally(()=>{
-            submitButton.disabled=false;
-            submitButton.textContent=isUpdateMode?'Update Project':'Add Project';
+        .finally(() => {
+            submitButton.disabled = false;
+            submitButton.textContent = isUpdateMode ? 'Update Project' : 'Add Project';
         });
     });
 
-    function populateForm(data){
-        document.getElementById('projectName').value = data.project_name||'';
-        document.getElementById('project_url').value = data.project_url||'';
-        document.getElementById('status').value = data.status||'inActive';
-        document.getElementById('teaser').value = data.teaser||'';
-        document.getElementById('project_details').value = data.project_details||'';
+    function populateForm(data) {
+        document.getElementById('projectName').value = data.project_name || '';
+        document.getElementById('project_url').value = data.project_url || '';
+        document.getElementById('status').value = String(data.status);
+        document.getElementById('teaser').value = data.teaser || '';
+        document.getElementById('project_details').value = data.project_details || '';
 
-        // ✅ Display map with correct path
+        // ✅ Map preview
         const mapPreview = document.getElementById('currentMapPreview');
-        if(data.project_map && mapPreview){
-            mapPreview.innerHTML = `<img src="../${data.project_map}" class="preview-image">`;
+        if (data.project_map && mapPreview) {
+            mapPreview.innerHTML = `<img src="..\\${data.project_map}" class="preview-image">`;
         }
 
-        // ✅ Display images with correct path
+        // ✅ Images preview
         const imagesPreview = document.getElementById('currentImagesPreview');
-        if(imagesPreview){
-            imagesPreview.innerHTML='';
-            try{
+        if (imagesPreview) {
+            imagesPreview.innerHTML = '';
+            try {
                 const images = JSON.parse(data.project_images);
-                if(images && images.length>0){
-                    images.forEach(img=>{
-                        imagesPreview.innerHTML+=`<img src="../${img}" class="preview-image">`;
+                if (images && images.length > 0) {
+                    images.forEach(img => {
+                        imagesPreview.innerHTML += `<img src="..\\${img}" class="preview-image">`;
                     });
-                } else imagesPreview.innerHTML=`<p class="text-muted">No current images.</p>`;
-            }catch(e){ console.error("Error parsing project images JSON:", e); }
+                } else {
+                    imagesPreview.innerHTML = `<p class="text-muted">No current images.</p>`;
+                }
+            } catch (e) {
+                console.error("Error parsing project images JSON:", e);
+            }
         }
     }
 
-    function showApiResponse(message,isSuccess){
-        apiResponseDiv.textContent=message;
-        apiResponseDiv.style.display='block';
-        apiResponseDiv.className=isSuccess?'alert alert-success':'alert alert-danger';
+    function showApiResponse(message, isSuccess) {
+        apiResponseDiv.textContent = message;
+        apiResponseDiv.style.display = 'block';
+        apiResponseDiv.className = isSuccess ? 'alert alert-success' : 'alert alert-danger';
     }
 });
 </script>
