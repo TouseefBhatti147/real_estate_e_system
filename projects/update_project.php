@@ -6,47 +6,47 @@ $pageError = '';
 
 // We need the ID from the URL to fetch data
 if (!isset($_GET['id'])) {
-    $pageError = 'No project ID found in the URL. Please load this page with ?id=PROJECT_ID';
+	$pageError = 'No project ID found in the URL. Please load this page with ?id=PROJECT_ID';
 } else {
-    try {
-        // Adjust these paths if your file structure is different
-        // These paths are based on your add_project.php includes
-        // NOTE: These includes assume the necessary files exist relative to this file's location.
-        // If you are missing these includes, you will get fatal errors.
-        // require_once '../includes/db_connection.php'; 
-        // require_once '../classes/project.php'; 
+	try {
+		// Adjust these paths if your file structure is different
+		// These paths are based on your add_project.php includes
+		// NOTE: These includes assume the necessary files exist relative to this file's location.
+		// If you are missing these includes, you will get fatal errors.
+		// require_once '../includes/db_connection.php'; 
+		// require_once '../classes/project.php'; 
 
-        // $pdo = Database::getConnection();
-        // $projectService = new Project($pdo);
-        
-        $projectId = trim($_GET['id']);
-        // $project = $projectService->getProjectById($projectId); // Requires getProjectById() to be public
-        
-        // MOCK DATA since actual backend is not available
-        $project = [
-            'id' => $projectId,
-            'project_name' => 'Royal Orchard Multan',
-            'project_url' => 'https://royalorchard.com',
-            'teaser' => 'Luxury living with modern amenities.',
-            'project_detail' => 'Royal Orchard Multan is a flagship housing project offering 5, 10, and 20 marla plots, as well as luxury villas. It includes a grand mosque, a commercial area, parks, and 24/7 security.',
-            'project_image' => '["../assets/img/project_multan_1.jpg", "../assets/img/project_multan_2.jpg"]',
-            'project_map' => '../assets/img/project_multan_map.png',
-            'status' => 'Active'
-        ];
+		// $pdo = Database::getConnection();
+		// $projectService = new Project($pdo);
+		
+		$projectId = trim($_GET['id']);
+		// $project = $projectService->getProjectById($projectId); // Requires getProjectById() to be public
+		
+		// MOCK DATA since actual backend is not available
+		$project = [
+			'id' => $projectId,
+			'project_name' => 'Royal Orchard Multan',
+			'project_url' => 'https://royalorchard.com',
+			'teaser' => 'Luxury living with modern amenities.',
+			'project_detail' => 'Royal Orchard Multan is a flagship housing project offering 5, 10, and 20 marla plots, as well as luxury villas. It includes a grand mosque, a commercial area, parks, and 24/7 security.',
+			'project_image' => '["../assets/img/project_multan_1.jpg", "../assets/img/project_multan_2.jpg"]',
+			'project_map' => '../assets/img/project_multan_map.png',
+			'status' => 'Active'
+		];
 
 
-        if ($project) {
-            // Encode the data as JSON to be safely embedded in JavaScript
-            $projectDataJSON = json_encode(['success' => true, 'data' => $project]);
-        } else {
-            $pageError = 'Project not found.';
-            $projectDataJSON = json_encode(['success' => false, 'message' => $pageError]);
-        }
-    } catch (\PDOException $e) {
-        $pageError = 'Database connection failed: ' . $e->getMessage();
-    } catch (\Exception $e) {
-        $pageError = 'An error occurred: ' . $e->getMessage();
-    }
+		if ($project) {
+			// Encode the data as JSON to be safely embedded in JavaScript
+			$projectDataJSON = json_encode(['success' => true, 'data' => $project]);
+		} else {
+			$pageError = 'Project not found.';
+			$projectDataJSON = json_encode(['success' => false, 'message' => $pageError]);
+		}
+	} catch (\PDOException $e) {
+		$pageError = 'Database connection failed: ' . $e->getMessage();
+	} catch (\Exception $e) {
+		$pageError = 'An error occurred: ' . $e->getMessage();
+	}
 }
 // --- End of PHP Block ---
 ?>
@@ -184,8 +184,8 @@ if (!isset($_GET['id'])) {
                       <div class="mb-3">
                         <label class="form-label">Current Images</label>
                         <div id="currentImagesPreview" class="my-2 d-flex flex-wrap">
-                           <!-- JS will populate this -->
-                           <p class="text-muted">Loading...</p>
+                            <!-- JS will populate this -->
+                            <p class="text-muted">Loading...</p>
                         </div>
                         <label for="projectImages" class="form-label">Upload New Images</label>
                         <input type="file" class="form-control" id="projectImages" name="projectImages[]" multiple >
@@ -196,8 +196,8 @@ if (!isset($_GET['id'])) {
                         <div class="mb-3">
                         <label class="form-label">Current Map</label>
                         <div id="currentMapPreview" class="my-2">
-                           <!-- JS will populate this -->
-                           <p class="text-muted">Loading...</p>
+                            <!-- JS will populate this -->
+                            <p class="text-muted">Loading...</p>
                         </div>
                         <label for="projectMap" class="form-label">Upload New Map</label>
                         <input type="file" class="form-control" id="projectMap" name="projectMap" >
@@ -229,7 +229,7 @@ if (!isset($_GET['id'])) {
         </div>
       </main>
 
-     <?php include("../includes/footer.php"); ?>
+      <?php include("../includes/footer.php"); ?>
     </div>
 
     <!-- Scripts -->
@@ -272,28 +272,32 @@ if (!isset($_GET['id'])) {
               submitButton.textContent = 'Updating...';
               
               const formData = new FormData(this);
-
-              // Use your actual path to the update API file
-              fetch('api_update_project.php', {
+              
+              // *** IMPORTANT: Set the action parameter for the unified API ***
+              formData.set('action', 'update');
+              
+              // Use your actual path to the unified API file
+              // Assuming api_projects.php is in the same directory as the old file
+              fetch('api_projects.php', { // <-- TARGET CHANGE HERE
                   method: 'POST',
                   body: formData
               })
               .then(response => {
-                    const contentType = response.headers.get("content-type");
-                    if (contentType && contentType.indexOf("application/json") !== -1) {
-                        return response.json();
-                    } else {
-                        return response.text().then(text => {
-                           throw new Error("Server did not return JSON. Response: " + text);
-                        });
-                    }
+                  const contentType = response.headers.get("content-type");
+                  if (contentType && contentType.indexOf("application/json") !== -1) {
+                      return response.json();
+                  } else {
+                      return response.text().then(text => {
+                          throw new Error("Server did not return JSON. Response: " + text);
+                      });
+                  }
               })
               .then(result => {
                   showApiResponse(result.message, result.success);
                   // If successful, reload the page to see file changes
                   if(result.success) {
                       setTimeout(() => {
-                         window.location.reload(); 
+                          window.location.reload(); 
                       }, 1500);
                   }
               })
@@ -332,13 +336,13 @@ if (!isset($_GET['id'])) {
                   const images = JSON.parse(data.project_image);
                   if (images && images.length > 0) {
                       images.forEach(img_path => {
-                          imagesPreview.innerHTML += `<img src="${img_path}" alt="Project Image" class="preview-image">`;
+                          imagesPreview.innerHTML += `<img src=\"${img_path}\" alt=\"Project Image\" class=\"preview-image\">`;
                       });
                   } else {
-                      imagesPreview.innerHTML = `<p class="text-muted">No current images.</p>`;
+                      imagesPreview.innerHTML = `<p class=\"text-muted\">No current images.</p>`;
                   }
               } catch(e) {
-                  imagesPreview.innerHTML = `<p class="text-muted">No current images.</p>`;
+                  imagesPreview.innerHTML = `<p class=\"text-muted\">No current images.</p>`;
               }
           }
           

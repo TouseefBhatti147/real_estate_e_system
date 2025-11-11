@@ -8,29 +8,31 @@ $cardTitle = $projectId ? 'Edit Project Details' : 'New Project Information';
 $submitText = $projectId ? 'Update Project' : 'Add Project';
 $cardType = $projectId ? 'card-success' : 'card-primary';
 
-// Mock Data for demonstration (replace with actual DB fetch)
+// ✅ --- Fetch Real Data from Database ---
 if ($projectId) {
-    $project = [
-        'id' => $projectId,
-        'project_name' => 'Royal Orchard Multan',
-        'project_url' => 'https://royalorchard.com',
-        'teaser' => 'Luxury living with modern amenities.',
-        // --- FIXED: Changed 'project_detail' to 'project_details' to match HTML input ID ---
-        'project_details' => 'Royal Orchard Multan is a flagship housing project offering 5, 10, and 20 marla plots.',
-        // --- FIXED: Changed 'project_image' (singular) to 'project_images' (plural) to match JS parsing ---
-        'project_images' => '["../assets/img/project_multan_1.jpg","../assets/img/project_multan_2.jpg"]',
-        'project_map' => '../assets/img/project_multan_map.png',
-        'status' => 'Active'
-    ];
-    if ($project) {
-        // --- WARNING: In a real app, this should be an AJAX fetch to a server endpoint (e.g., api_get_project.php)
-        // NOT relying on PHP preloading mock data.
-        $projectDataJSON = json_encode(['success' => true, 'data' => $project]);
+    $db = new mysqli("localhost", "root", "", "rdlpk_db1");
+    if ($db->connect_error) {
+        $pageError = "Database connection failed: " . $db->connect_error;
     } else {
-        $pageError = "Project not found for ID: " . $projectId;
-        $projectDataJSON = json_encode(['success' => false, 'message' => $pageError]);
+        $stmt = $db->prepare("SELECT * FROM projects WHERE id = ?");
+        $stmt->bind_param("i", $projectId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result && $result->num_rows > 0) {
+            $project = $result->fetch_assoc();
+            $project['project_images'] = $project['project_images'] ?: '[]';
+            $projectDataJSON = json_encode(['success' => true, 'data' => $project]);
+        } else {
+            $pageError = "⚠️ Project not found for ID: " . htmlspecialchars($projectId);
+            $projectDataJSON = json_encode(['success' => false, 'message' => $pageError]);
+        }
+
+        $stmt->close();
+        $db->close();
     }
 }
+
 $formDisabled = !empty($pageError);
 ?>
 <!DOCTYPE html>
@@ -103,32 +105,32 @@ $formDisabled = !empty($pageError);
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label for="projectName" class="form-label">Project Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="projectName" name="projectName" required <?= $formDisabled?'disabled':'' ?>>
+                                        <input type="text" class="form-control" id="projectName" name="projectName" required <?= $formDisabled?'disabled':'' ?> >
                                     </div>
                                     <div class="col-md-6">
                                         <label for="url" class="form-label">Project URL <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="project_url" name="project_url" placeholder="https://example.com" required <?= $formDisabled?'disabled':'' ?>>
+                                        <input type="text" class="form-control" id="project_url" name="project_url" placeholder="https://example.com" required <?= $formDisabled?'disabled':'' ?> >
                                     </div>
                                 </div>
 
                                 <div class="row mb-3">
                                     <div class="col-md-8">
                                         <label for="teaser" class="form-label">Teaser <span class="text-danger">*</span></label>
-                                        <textarea class="form-control" id="teaser" name="teaser" rows="2" required <?= $formDisabled?'disabled':'' ?>></textarea>
+                                        <textarea class="form-control" id="teaser" name="teaser" rows="2" required <?= $formDisabled?'disabled':'' ?> ></textarea>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
                                         <select class="form-select" id="status" name="status" required <?= $formDisabled?'disabled':'' ?>>
                                             <option value="" disabled selected>Select Status</option>
-                                            <option value="Active">Active</option>
-                                            <option value="inActive">inActive</option>
+                                            <option value="1">Active</option>
+                                            <option value="0">inActive</option>
                                         </select>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="projectDetail" class="form-label">Project Detail <span class="text-danger">*</span></label>
-                                    <textarea class="form-control" id="project_details" name="project_details" rows="5" required <?= $formDisabled?'disabled':'' ?>></textarea>
+                                    <textarea class="form-control" id="project_details" name="project_details" rows="5" required <?= $formDisabled?'disabled':'' ?> ></textarea>
                                 </div>
 
                                 <?php if($projectId): ?>
@@ -137,6 +139,7 @@ $formDisabled = !empty($pageError);
                                     <div id="currentImagesPreview" class="d-flex flex-wrap"></div>
                                 </div>
                                 <?php endif; ?>
+
                                 <div class="mb-3">
                                     <label for="projectImages" class="form-label"><?= $projectId?'Upload New Images (Replace All)':'Project Images' ?> <?= $projectId?'':'*' ?></label>
                                     <input type="file" class="form-control" id="projectImages" name="projectImages[]" multiple <?= $projectId?'':'required' ?> <?= $formDisabled?'disabled':'' ?>>
@@ -149,6 +152,7 @@ $formDisabled = !empty($pageError);
                                     <div id="currentMapPreview"></div>
                                 </div>
                                 <?php endif; ?>
+
                                 <div class="mb-3">
                                     <label for="projectMap" class="form-label"><?= $projectId?'Upload New Map':'Project Map' ?> <?= $projectId?'':'*' ?></label>
                                     <input type="file" class="form-control" id="projectMap" name="projectMap" <?= $projectId?'':'required' ?> <?= $formDisabled?'disabled':'' ?>>
@@ -221,19 +225,24 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('teaser').value = data.teaser||'';
         document.getElementById('project_details').value = data.project_details||'';
 
+        // ✅ Display map with correct path
         const mapPreview = document.getElementById('currentMapPreview');
-        if(data.project_map && mapPreview) mapPreview.innerHTML=`<img src="${data.project_map}" class="preview-image">`;
+        if(data.project_map && mapPreview){
+            mapPreview.innerHTML = `<img src="../${data.project_map}" class="preview-image">`;
+        }
 
+        // ✅ Display images with correct path
         const imagesPreview = document.getElementById('currentImagesPreview');
-        imagesPreview.innerHTML='';
-        try{
-            // This line correctly looks for 'project_images' (plural) which now matches the PHP mock data structure.
-            const images = JSON.parse(data.project_images); 
-            if(images && images.length>0){
-                images.forEach(img=>{imagesPreview.innerHTML+=`<img src="${img}" class="preview-image">`;});
-            } else imagesPreview.innerHTML=`<p class="text-muted">No current images.</p>`;
-        }catch(e){
-             console.error("Error parsing project images JSON:", e);
+        if(imagesPreview){
+            imagesPreview.innerHTML='';
+            try{
+                const images = JSON.parse(data.project_images);
+                if(images && images.length>0){
+                    images.forEach(img=>{
+                        imagesPreview.innerHTML+=`<img src="../${img}" class="preview-image">`;
+                    });
+                } else imagesPreview.innerHTML=`<p class="text-muted">No current images.</p>`;
+            }catch(e){ console.error("Error parsing project images JSON:", e); }
         }
     }
 
