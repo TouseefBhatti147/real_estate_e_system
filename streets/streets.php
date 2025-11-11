@@ -166,7 +166,7 @@
                   <td>${st.street}</td>
                   <td>${st.create_date || ''}</td>
                   <td>
-                    <a href="add_street.php?id=${st.id}" class="btn btn-sm btn-warning me-1"><i class="bi bi-pencil-square"></i></a>
+                    <a href="form_street.php?id=${st.id}" class="btn btn-sm btn-warning me-1"><i class="bi bi-pencil-square"></i></a>
                     <button class="btn btn-sm btn-danger" onclick="deleteStreet(${st.id})"><i class="bi bi-trash-fill"></i></button>
                   </td>
                 </tr>
