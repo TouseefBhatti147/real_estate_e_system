@@ -62,7 +62,6 @@
                       <th>ID</th>
                       <th>Project Name</th>
                       <th>Sector ID</th>
-                      <th>Create Date</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -108,7 +107,6 @@
                 <td>${sec.id}</td>
                 <td>${sec.project_name || '-'}</td>
                 <td>${sec.sector_id}</td>
-                <td>${sec.create_date || '-'}</td>
                 <td>
                   <a href="form_sector.php?id=${sec.id}" class="btn btn-sm btn-warning me-1"><i class="bi bi-pencil-square"></i></a>
                   <button class="btn btn-sm btn-danger" onclick="deleteSector(${sec.id})"><i class="bi bi-trash-fill"></i></button>

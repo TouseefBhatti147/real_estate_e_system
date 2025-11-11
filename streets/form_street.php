@@ -23,15 +23,6 @@ if (empty($pageError)) {
     }
 }
 
-// ✅ Fetch all sectors
-$sectors = [];
-if (empty($pageError)) {
-    $result = $db->query("SELECT id, sector_name FROM sectors ORDER BY sector_name ASC");
-    while ($row = $result->fetch_assoc()) {
-        $sectors[] = $row;
-    }
-}
-
 // ✅ Fetch existing street data (edit mode)
 if ($streetId && empty($pageError)) {
     $stmt = $db->prepare("SELECT * FROM streets WHERE id = ?");
@@ -120,9 +111,6 @@ $formDisabled = !empty($pageError);
                                         <label for="sector_id" class="form-label">Sector <span class="text-danger">*</span></label>
                                         <select class="form-select" id="sector_id" name="sector_id" required <?= $formDisabled?'disabled':'' ?>>
                                             <option value="">Select Sector</option>
-                                            <?php foreach ($sectors as $s): ?>
-                                                <option value="<?= htmlspecialchars($s['id']) ?>"><?= htmlspecialchars($s['sector_name']) ?></option>
-                                            <?php endforeach; ?>
                                         </select>
                                     </div>
                                 </div>
@@ -155,14 +143,55 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('streetForm');
     const apiResponseDiv = document.getElementById('apiResponse');
     const submitButton = document.getElementById('submitButton');
+    const projectSelect = document.getElementById('project_id');
+    const sectorSelect = document.getElementById('sector_id');
 
+    // --- Load sectors dynamically when project changes ---
+    projectSelect.addEventListener('change', function() {
+        const projectId = this.value;
+        sectorSelect.innerHTML = '<option value="">Loading...</option>';
+
+        if (!projectId) {
+            sectorSelect.innerHTML = '<option value="">Select Sector</option>';
+            return;
+        }
+
+        fetch(`../sectors/api_sectors.php?project_id=${projectId}`)
+            .then(res => res.json())
+            .then(data => {
+                sectorSelect.innerHTML = '<option value="">Select Sector</option>';
+                if (data.success && data.data.length > 0) {
+                    data.data.forEach(sec => {
+                        const opt = document.createElement('option');
+                        opt.value = sec.id;
+                        opt.textContent = sec.sector_name;
+                        sectorSelect.appendChild(opt);
+                    });
+                }
+                // auto-select sector if editing
+                if (isUpdateMode && preloadedData.success) {
+                    sectorSelect.value = preloadedData.data.sector_id || '';
+                }
+            })
+            .catch(err => {
+                console.error('Sector load error:', err);
+                sectorSelect.innerHTML = '<option value="">Error loading sectors</option>';
+            });
+    });
+
+    // --- If in edit mode, prefill form ---
     if (isUpdateMode && preloadedData && preloadedData.success && preloadedData.data) {
         const data = preloadedData.data;
         document.getElementById('project_id').value = data.project_id || '';
-        document.getElementById('sector_id').value = data.sector_id || '';
         document.getElementById('street').value = data.street || '';
+
+        // Load sectors for the selected project and pre-select
+        if (data.project_id) {
+            projectSelect.dispatchEvent(new Event('change'));
+        }
     }
 
+    // --- Submit form ---
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         submitButton.disabled = true;
