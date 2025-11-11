@@ -1,149 +1,191 @@
 <?php session_start(); ?>
+<?php
+$sectorDataJSON = 'null';
+$pageError = '';
+$sectorId = isset($_GET['id']) ? trim($_GET['id']) : null;
+$pageTitle = $sectorId ? 'Edit Sector' : 'Add New Sector';
+$cardTitle = $sectorId ? 'Edit Sector Details' : 'New Sector Information';
+$submitText = $sectorId ? 'Update Sector' : 'Add Sector';
+$cardType = $sectorId ? 'card-success' : 'card-primary';
 
-<!doctype html>
+$db = new mysqli("localhost", "root", "", "rdlpk_db1");
+if ($db->connect_error) {
+    $pageError = "Database connection failed: " . $db->connect_error;
+}
+
+// ✅ --- Fetch All Projects for Dropdown ---
+$projects = [];
+if (empty($pageError)) {
+    $result = $db->query("SELECT id, project_name FROM projects ORDER BY project_name ASC");
+    while ($row = $result->fetch_assoc()) {
+        $projects[] = $row;
+    }
+}
+
+// ✅ --- Fetch Sector Data if Editing ---
+if ($sectorId && empty($pageError)) {
+    $stmt = $db->prepare("SELECT * FROM sectors WHERE id = ?");
+    $stmt->bind_param("i", $sectorId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result && $result->num_rows > 0) {
+        $sector = $result->fetch_assoc();
+        $sectorDataJSON = json_encode(['success' => true, 'data' => $sector]);
+    } else {
+        $pageError = "⚠️ Sector not found for ID: " . htmlspecialchars($sectorId);
+        $sectorDataJSON = json_encode(['success' => false, 'message' => $pageError]);
+    }
+
+    $stmt->close();
+}
+$db->close();
+
+$formDisabled = !empty($pageError);
+?>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Real Estate E-system - Add Sector</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
-    <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
-    <meta name="title" content="Admin | Add Sector" />
-    <meta name="author" content="ColorlibHQ" />
-    <meta name="description" content="Admin Dashboard..." />
-    <meta name="keywords" content="bootstrap 5, admin dashboard, accessible, WCAG" />
-    <meta name="supported-color-schemes" content="light dark" />
-
-    <link rel="preload" href="../css/adminlte.css" as="style" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
-      crossorigin="anonymous"
-      media="print"
-      onload="this.media='all'"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="../css/adminlte.css" />
-  </head>
-
-  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
-    <div class="app-wrapper">
-      <?php require("../includes/header.php");?>
-
-      <!-- Sidebar -->
-      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-        <div class="sidebar-brand">
-          <a href="..\index.php" class="brand-link">
-           
+<head>
+<meta charset="UTF-8">
+<title>Sector - <?= $pageTitle ?></title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../css/adminlte.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+<div class="app-wrapper">
+<?php include("../includes/header.php"); ?>
+<aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+    <div class="sidebar-brand">
+        <a href="../index.php" class="brand-link">
             <span class="brand-text fw-light">Real Estate E-System</span>
-          </a>
-        </div>
-        <?php include("../includes/sidebar.php"); ?>
-      </aside>
+        </a>
+    </div>
+    <?php include("../includes/sidebar.php"); ?>
+</aside>
 
-      <!-- Main Content -->
-      <main class="app-main">
-        <!-- App Content Header -->
-        <div class="app-content-header">
-          <div class="container-fluid">
+<main class="app-main">
+    <div class="app-content-header mb-4">
+        <div class="container-fluid">
             <div class="row">
-              <div class="col-sm-6">
-                <h3 class="mb-0">Add Sector</h3>
-              </div>
-              <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item"><a href="sectors.php">Sectors List</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Add Sector</li>
-                </ol>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- App Content -->
-        <div class="app-content">
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-md-12">
-                <div class="card card-primary mb-4">
-                  <div class="card-header">
-                    <h3 class="card-title mb-0">New Sector Details</h3>
-                  </div>
-                  <!-- /.card-header -->
-                  <!-- form start -->
-                  <form action="" method="POST">
-                    <div class="card-body">
-                      <div class="row">
-                        <div class="col-md-6">
-                           <div class="mb-3">
-                            <label for="projectSelect" class="form-label">Project Name <span class="text-danger">*</span></label>
-                            <select id="projectSelect" name="projectName" class="form-select" required>
-                              <option value="" selected disabled>Please Select Project</option>
-                              <option>Royal Orchard Multan</option>
-                              <option>Royal Orchard-II, Multan</option>
-                              <option>Royal Orchard Sargodha</option>
-                              <option>Royal Orchard Sahiwal</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                           <div class="mb-3">
-                            <label for="blockSelect" class="form-label">Block Name <span class="text-danger">*</span></label>
-                            <select id="blockSelect" name="blockName" class="form-select" required>
-                                <option value="" selected disabled>Please Select Block</option>
-                                <option>General Block</option>
-                                <option>Overseas Block</option>
-                                <option>Executive Block</option>
-                                <!-- You can add more block options here based on your data -->
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div class="mb-3">
-                        <label for="sectorName" class="form-label">Sector Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="sectorName" name="sectorName" placeholder="Enter sector name..." required>
-                      </div>
-
-                      <div class="mb-3">
-                        <label for="sectorDescription" class="form-label">Description <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="sectorDescription" name="sectorDescription" rows="3" placeholder="Enter description..." required></textarea>
-                      </div>
-
-                    </div>
-                    <!-- /.card-body -->
-
-                    <div class="card-footer">
-                      <button type="submit" class="btn btn-primary">Submit</button>
-                      <a href="sectors.php" class="btn btn-secondary ms-2">Cancel</a>
-                    </div>
-                  </form>
+                <div class="col-sm-6"><h3><?= $pageTitle ?></h3></div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-end">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active"><?= $pageTitle ?></li>
+                    </ol>
                 </div>
-                <!-- /.card -->
-              </div>
             </div>
-          </div>
         </div>
-      </main>
-
-     <?php include("../includes/footer.php"); ?>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <script src="../js/adminlte.js"></script>
-  </body>
+    <div class="app-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card <?= $cardType ?> mb-4 shadow-sm">
+                        <div class="card-header"><h4><?= $cardTitle ?></h4></div>
+                        <form id="sectorForm" method="POST">
+                            <div class="card-body">
+                                <div id="apiResponse" class="alert" style="display:none;"></div>
+                                <?php if($pageError): ?>
+                                <div class="alert alert-danger"><?= $pageError ?></div>
+                                <?php endif; ?>
+
+                                <input type="hidden" name="id" id="sectorId" value="<?= htmlspecialchars($sectorId ?? '') ?>">
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="sectorName" class="form-label">Sector Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="sector_name" name="sector_name" required <?= $formDisabled?'disabled':'' ?>>
+                                    </div>
+                                   
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="project_id" class="form-label">Project <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="project_id" name="project_id" required <?= $formDisabled?'disabled':'' ?>>
+                                            <option value="" disabled selected>Select Project</option>
+                                            <?php foreach ($projects as $project): ?>
+                                                <option value="<?= $project['id'] ?>"><?= htmlspecialchars($project['project_name']) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="details" class="form-label">Details <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="details" name="details" rows="4" required <?= $formDisabled?'disabled':'' ?>></textarea>
+                                </div>
+                            </div>
+
+                            <div class="card-footer text-end">
+                                <button type="submit" id="submitButton" class="btn <?= $sectorId?'btn-success':'btn-primary' ?>" <?= $formDisabled?'disabled':'' ?>><?= $submitText ?></button>
+                                <a href="sectors.php" class="btn btn-secondary ms-2">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<?php include("../includes/footer.php"); ?>
+</div>
+
+<script>
+const preloadedData = <?= $sectorDataJSON ?>;
+const isUpdateMode = <?= $sectorId?'true':'false' ?>;
+
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('sectorForm');
+    const apiResponseDiv = document.getElementById('apiResponse');
+    const submitButton = document.getElementById('submitButton');
+
+    if (isUpdateMode && preloadedData && preloadedData.success && preloadedData.data) {
+        populateForm(preloadedData.data);
+    }
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        submitButton.disabled = true;
+        submitButton.textContent = isUpdateMode ? 'Updating...' : 'Adding...';
+
+        const formData = new FormData(this);
+        formData.set('action', isUpdateMode ? 'update' : 'add');
+
+        fetch('api_sectors.php', { method: 'POST', body: formData })
+        .then(response => response.json())
+        .then(result => {
+            showApiResponse(result.message, result.success);
+            if (result.success) {
+                setTimeout(() => window.location.href = 'sectors.php', 1000);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            showApiResponse('Error: ' + err.message, false);
+        })
+        .finally(() => {
+            submitButton.disabled = false;
+            submitButton.textContent = isUpdateMode ? 'Update Sector' : 'Add Sector';
+        });
+    });
+
+    function populateForm(data) {
+        document.getElementById('sector_name').value = data.sector_name || '';
+        document.getElementById('project_id').value = data.project_id || '';
+        document.getElementById('details').value = data.details || '';
+    }
+
+    function showApiResponse(message, isSuccess) {
+        apiResponseDiv.textContent = message;
+        apiResponseDiv.style.display = 'block';
+        apiResponseDiv.className = isSuccess ? 'alert alert-success' : 'alert alert-danger';
+    }
+});
+</script>
+</body>
 </html>

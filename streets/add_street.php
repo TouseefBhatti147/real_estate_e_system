@@ -44,11 +44,7 @@
         <div class="sidebar-brand">
  <a href="..\index.php" class="brand-link">
 
-            <img
-              src="./assets/img/AdminLTELogo.png"
-              alt="AdminLTE Logo"
-              class="brand-image opacity-75 shadow"
-            />
+           
             <span class="brand-text fw-light">Real Estate E-System</span>
           </a>
         </div>
