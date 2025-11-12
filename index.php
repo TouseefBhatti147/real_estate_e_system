@@ -164,7 +164,7 @@
   </div>
 
   <div class="col-md-3">
-    <a href="plot_sizes/plot_sizes.php">
+    <a href="plot_sizes/plot_size_list.php">
     <div class="info-box mb-3 text-bg-secondary">
       <span class="info-box-icon"><i class="bi bi-layout-text-sidebar-reverse"></i></span>
       <div class="info-box-content">
