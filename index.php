@@ -294,7 +294,7 @@
 <div class="row">
 
   <div class="col-md-3">
-            <a href="members/members.php">
+            <a href="members/member_list.php">
 
     <div class="info-box mb-3 text-bg-success">
       <span class="info-box-icon"><i class="bi bi-people-fill"></i></span>
