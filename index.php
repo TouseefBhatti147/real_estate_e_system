@@ -175,7 +175,7 @@
   </div>
 
   <div class="col-md-3">
-            <a href="installment_plan/installment_plan.php">
+            <a href="installment_plan/installment_plan_list.php">
 
     <div class="info-box mb-3 text-bg-warning">
       <span class="info-box-icon"><i class="bi bi-calendar2-week"></i></span>
