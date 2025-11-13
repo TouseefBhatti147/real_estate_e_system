@@ -198,7 +198,7 @@
   </div>
 
   <div class="col-md-3">
-        <a href="property_type/property_type.php">
+        <a href="property_type/property_types.php">
     <div class="info-box mb-3 text-bg-danger">
       <span class="info-box-icon"><i class="bi bi-house-door-fill"></i></span>
       <div class="info-box-content">
@@ -223,7 +223,7 @@
  
 
   <div class="col-md-3">
-                <a href="sliders/sliders.php">
+                <a href="sliders/slider_list.php">
 
     <div class="info-box mb-3 text-bg-warning">
       <span class="info-box-icon"><i class="bi bi-sliders"></i></span>
@@ -235,7 +235,7 @@
   </div>
 
   <div class="col-md-3">
-                <a href="sales_centers/sales_centers.php">
+                <a href="sales_centers/sale_center_list.php">
 
     <div class="info-box mb-3 text-bg-danger">
       <span class="info-box-icon"><i class="bi bi-shop"></i></span>
@@ -249,7 +249,7 @@
   
 
   <div class="col-md-3">
-    <a href="news/news.php">
+    <a href="news/news_list.php">
     <div class="info-box mb-3 text-bg-secondary">
       <span class="info-box-icon"><i class="bi bi-newspaper"></i></span>
       <div class="info-box-content">
@@ -262,19 +262,9 @@
 
  
 
+  
   <div class="col-md-3">
-    <a href="image_gallery/image_gallery.php">
-    <div class="info-box mb-3 text-bg-success">
-      <span class="info-box-icon"><i class="bi bi-images"></i></span>
-      <div class="info-box-content">
-        <span class="info-box-text">Image Gallery</span>
-      </div>
-    </div>
-</a>
-  </div>
-
-  <div class="col-md-3">
-    <a href="countries/countries.php">
+    <a href="countries/country_list.php">
     <div class="info-box mb-3 text-bg-danger">
       <span class="info-box-icon"><i class="bi bi-globe-americas"></i></span>
       <div class="info-box-content">
@@ -283,7 +273,7 @@
     </div>
 </a>
   </div><div class="col-md-3">
-    <a href="cities/cities.php">
+    <a href="cities/city_list.php">
     <div class="info-box mb-3 text-bg-danger">
       <span class="info-box-icon"><i class="bi bi-buildings"></i></span>
       <div class="info-box-content">
