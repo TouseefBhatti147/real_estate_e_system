@@ -307,7 +307,7 @@
   </div>
 
   <div class="col-md-3">
-            <a href="users/users.php">
+            <a href="users/user_list.php">
 
     <div class="info-box mb-3 text-bg-danger">
       <span class="info-box-icon"><i class="bi bi-person-fill"></i></span>
