@@ -1,8 +1,33 @@
 <div class="sidebar-wrapper">
   <nav class="mt-2">
     <!--begin::Sidebar Menu-->
+     <!-- client sidebar menu -->
+ <ul
+      class="  nav sidebar-menu flex-column"
+      data-lte-toggle="treeview"
+      role="navigation"
+      aria-label="Main navigation"
+      data-accordion="false"
+      id="navigation"
+    >
+      <li class="nav-item">
+        <a href="../index.php" class="nav-link active">
+          <i class="nav-icon bi bi-speedometer"></i>
+          <p>Client Dashboard</p>
+        </a>
+      </li>
+
+     
+    </ul>
+
+
+
+
+
+
+    <!-- // Admin sidebar menu -->
     <ul
-      class="nav sidebar-menu flex-column"
+      class="d-none nav sidebar-menu flex-column"
       data-lte-toggle="treeview"
       role="navigation"
       aria-label="Main navigation"
