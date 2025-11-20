@@ -156,7 +156,7 @@ if ($currentCountryId) {
 
                                     <div class="row mb-3">
                                         <div class="col-md-4">
-                                            <label class="form-label">S/O, D/O, W/O</label>
+                                            <label class="form-label">Father/Spouse</label>
                                             <input type="text" name="sodowo" class="form-control"
                                                    value="<?= htmlspecialchars($data['sodowo'] ?? '') ?>">
                                         </div>
