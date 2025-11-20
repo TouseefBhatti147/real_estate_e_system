@@ -14,6 +14,7 @@
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
       <?php include("../includes/header.php"); ?>
+
       <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
         <div class="sidebar-brand">
           <a href="../index.php" class="brand-link">
@@ -88,6 +89,12 @@
       <?php include("../includes/footer.php"); ?>
     </div>
 
+    <!-- AdminLTE / Bootstrap JS so header menu and dropdowns work -->
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"></script>
+    <script src="../js/adminlte.js"></script>
+
     <script>
       let currentPage = 1;
       let totalPages = 1;
@@ -112,10 +119,6 @@
 
       // ------------------- LOAD PROJECTS -------------------
       function loadProjects() {
-        $.getJSON('../sectors/api_sectors.php', function (data) {
-          // use sectors API to get project list (you can switch to a separate API if needed)
-        });
-
         $.getJSON('../projects/api_projects.php', function (res) {
           if (res.success && res.data.length > 0) {
             const select = $('#projectSelect');
@@ -130,14 +133,15 @@
       // ------------------- LOAD SECTORS -------------------
       function loadSectors(projectId = '') {
         let url = '../sectors/api_sectors.php';
-        if (projectId) url += '?project_id=' + projectId;
+        if (projectId) url += '?project_id=' + encodeURIComponent(projectId);
 
         $.getJSON(url, function (res) {
           const select = $('#sectorSelect');
           select.empty().append('<option value="">All Sectors</option>');
           if (res.success && res.data.length > 0) {
             res.data.forEach(sec => {
-              select.append(`<option value="${sec.id}">${sec.sector_name}</option>`);
+              // sectors table field name is sector_id
+              select.append(`<option value="${sec.sector_id}">${sec.sector_name}</option>`);
             });
           }
         });

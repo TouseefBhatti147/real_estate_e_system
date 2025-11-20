@@ -37,12 +37,12 @@ if ($method === 'GET') {
     // --- Fetch data with pagination ---
     $query = "
         SELECT 
-            s.id, s.project_id, s.sector_name, s.details, s.details AS sector_id,
+            s.sector_id AS sector_id, s.project_id, s.sector_name, s.details, s.details,
             p.project_name 
         FROM sectors s
         LEFT JOIN projects p ON s.project_id = p.id
         $where
-        ORDER BY s.id DESC
+        ORDER BY s.sector_id DESC
         LIMIT $limit OFFSET $offset
     ";
 
@@ -134,4 +134,7 @@ if ($method === 'POST') {
 
 // ❌ Invalid method
 echo json_encode(['success' => false, 'message' => '❌ Invalid request method.']);
+///////////////////////////////
+
+
 ?>

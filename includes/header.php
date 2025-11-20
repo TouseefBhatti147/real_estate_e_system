@@ -21,13 +21,15 @@
           <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
             Property Management
           </a>
-          <ul class="dropdown-menu shadow">
-            <li><a class="dropdown-item" href="plots/plots_list.php">All Plots</a></li>
-            <li><a class="dropdown-item" href="plots/form_plot.php">Add Plot</a></li>
-            <li><a class="dropdown-item" href="#">Allot Plot</a></li>
-            <li><a class="dropdown-item" href="#">Transfer Plot</a></li>
-            <li><a class="dropdown-item" href="#">Recover Plot</a></li>
-          </ul>
+   <ul class="dropdown-menu shadow">
+
+    <li><a class="dropdown-item" href="/admin/plots/plots_list.php">All Plots</a></li>
+    <li><a class="dropdown-item" href="/admin/plots/form_plot.php">Add Plot</a></li>
+    <li><a class="dropdown-item" href="/admin/plots/plots_list.php">Allot Plots</a></li>
+    <li><a class="dropdown-item" href="/admin/plots/plots_list.php">Transfer Plots</a></li>
+
+</ul>
+
         </li>
 
         <!-- PROJECT MANAGEMENT -->
@@ -35,14 +37,22 @@
           <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
             Projects
           </a>
-          <ul class="dropdown-menu shadow">
-            <li><a class="dropdown-item" href="projects/projects.php">Projects</a></li>
-            <li><a class="dropdown-item" href="streets/streets.php">Streets</a></li>
-            <li><a class="dropdown-item" href="sectors/sectors.php">Sectors</a></li>
-            <li><a class="dropdown-item" href="plot_sizes/plot_size_list.php">Plot Size Categories</a></li>
-            <li><a class="dropdown-item" href="charges/charges.php">Charges</a></li>
-            <li><a class="dropdown-item" href="property_type/property_types.php">Property Types</a></li>
-          </ul>
+         <ul class="dropdown-menu shadow">
+
+   <li><a class="dropdown-item" href="/admin/plots/plots_list.php">All Plots</a></li>
+<li><a class="dropdown-item" href="/admin/plots/form_plot.php">Add Plots</a></li>
+
+<li><a class="dropdown-item" href="/admin/projects/projects.php">Projects</a></li>
+<li><a class="dropdown-item" href="/admin/sectors/sectors.php">Sectors</a></li>
+<li><a class="dropdown-item" href="/admin/streets/streets.php">Streets</a></li>
+
+<li><a class="dropdown-item" href="/admin/plot_sizes/plot_size_list.php">Plot Size Categories</a></li>
+<li><a class="dropdown-item" href="/admin/charges/charges.php">Charges</a></li>
+<li><a class="dropdown-item" href="/admin/property_type/property_type.php">Property Types</a></li>
+
+
+</ul>
+
         </li>
 
         <!-- MEMBERS -->

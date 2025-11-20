@@ -73,7 +73,7 @@ $formDisabled = !empty($pageError);
                 <div class="col-sm-6"><h3><?= $pageTitle ?></h3></div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="../index.php">Home</a></li>
                         <li class="breadcrumb-item active"><?= $pageTitle ?></li>
                     </ol>
                 </div>
@@ -122,7 +122,9 @@ $formDisabled = !empty($pageError);
                             </div>
 
                             <div class="card-footer text-end">
-                                <button type="submit" id="submitButton" class="btn <?= $streetId?'btn-success':'btn-primary' ?>" <?= $formDisabled?'disabled':'' ?>><?= $submitText ?></button>
+                                <button type="submit" id="submitButton" class="btn <?= $streetId?'btn-success':'btn-primary' ?>" <?= $formDisabled?'disabled':'' ?>>
+                                    <?= $submitText ?>
+                                </button>
                                 <a href="streets.php" class="btn btn-secondary ms-2">Cancel</a>
                             </div>
                         </form>
@@ -134,6 +136,12 @@ $formDisabled = !empty($pageError);
 </main>
 <?php include("../includes/footer.php"); ?>
 </div>
+
+<!-- JS so header dropdown etc. work -->
+<script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"></script>
+<script src="../js/adminlte.js"></script>
 
 <script>
 const preloadedData = <?= $streetDataJSON ?>;
@@ -156,21 +164,22 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        fetch(`../sectors/api_sectors.php?project_id=${projectId}`)
+        fetch(`../sectors/api_sectors.php?project_id=${encodeURIComponent(projectId)}`)
             .then(res => res.json())
             .then(data => {
                 sectorSelect.innerHTML = '<option value="">Select Sector</option>';
                 if (data.success && data.data.length > 0) {
                     data.data.forEach(sec => {
+                        // ✅ VALUE = sector_id (INT), TEXT = sector_name
                         const opt = document.createElement('option');
-                        opt.value = sec.id;
+                       opt.value = sec.sector_id;
                         opt.textContent = sec.sector_name;
                         sectorSelect.appendChild(opt);
                     });
                 }
                 // auto-select sector if editing
                 if (isUpdateMode && preloadedData.success) {
-                    sectorSelect.value = preloadedData.data.sector_id || '';
+                    sectorSelect.value = String(preloadedData.data.sector_id || '');
                 }
             })
             .catch(err => {
@@ -182,11 +191,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- If in edit mode, prefill form ---
     if (isUpdateMode && preloadedData && preloadedData.success && preloadedData.data) {
         const data = preloadedData.data;
-        document.getElementById('project_id').value = data.project_id || '';
+        projectSelect.value = data.project_id || '';
         document.getElementById('street').value = data.street || '';
 
-        // Load sectors for the selected project and pre-select
         if (data.project_id) {
+            // this will also auto-select sector_id after fetch
             projectSelect.dispatchEvent(new Event('change'));
         }
     }

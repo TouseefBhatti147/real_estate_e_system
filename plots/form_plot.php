@@ -56,7 +56,7 @@ $propTypes = $db->query("SELECT property_type_id, title FROM property_types ORDE
             <div class="card">
                 <div class="card-body">
 
-                    <form id="plotForm" method="post" action="api_plots.php">
+                    <form id="plotForm" method="post">
                         <input type="hidden" name="action" value="<?= $action ?>">
                         <input type="hidden" name="id" value="<?= $record['id'] ?? '' ?>">
 
@@ -207,93 +207,97 @@ $propTypes = $db->query("SELECT property_type_id, title FROM property_types ORDE
 <script src="../js/adminlte.js"></script>
 
 <script>
-// helper to load sectors
+// --- Load sectors by project ---
 function loadSectors(projectId, selectedSectorId = '') {
+    const sectorSelect = document.getElementById("sector_id");
+    const streetSelect = document.getElementById("street_id");
+
     if (!projectId) {
-        document.getElementById("sector_id").innerHTML = '<option value="">Select Sector</option>';
-        document.getElementById("street_id").innerHTML = '<option value="">Select Street</option>';
+        sectorSelect.innerHTML = '<option value="">Select Sector</option>';
+        streetSelect.innerHTML = '<option value="">Select Street</option>';
         return;
     }
 
-    fetch("api_plots.php?action=load_sectors&project_id=" + projectId)
+    sectorSelect.innerHTML = '<option value="">Loading...</option>';
+    streetSelect.innerHTML = '<option value="">Select Street</option>';
+
+    fetch("api_plots.php?action=load_sectors&project_id=" + encodeURIComponent(projectId))
         .then(r => r.json())
         .then(data => {
-            let sec = document.getElementById("sector_id");
-            sec.innerHTML = '<option value="">Select Sector</option>';
+            sectorSelect.innerHTML = '<option value="">Select Sector</option>';
 
             data.forEach(row => {
-                const sel = (selectedSectorId && selectedSectorId == row.sector_id) ? 'selected' : '';
-                sec.innerHTML += `<option value="${row.sector_id}" ${sel}>${row.sector_name}</option>`;
+                const sel = (selectedSectorId && String(selectedSectorId) === String(row.sector_id)) ? 'selected' : '';
+                sectorSelect.innerHTML += `<option value="${row.sector_id}" ${sel}>${row.sector_name}</option>`;
             });
-
-            document.getElementById("street_id").innerHTML = '<option value="">Select Street</option>';
         });
 }
 
-// helper to load streets
+// --- Load streets by sector ---
 function loadStreets(sectorId, selectedStreetId = '') {
+    const streetSelect = document.getElementById("street_id");
+
     if (!sectorId) {
-        document.getElementById("street_id").innerHTML = '<option value="">Select Street</option>';
+        streetSelect.innerHTML = '<option value="">Select Street</option>';
         return;
     }
 
-    fetch("api_plots.php?action=load_streets&sector_id=" + sectorId)
+    streetSelect.innerHTML = '<option value="">Loading...</option>';
+
+    fetch("api_plots.php?action=load_streets&sector_id=" + encodeURIComponent(sectorId))
         .then(r => r.json())
         .then(data => {
-            let st = document.getElementById("street_id");
-            st.innerHTML = '<option value="">Select Street</option>';
+            streetSelect.innerHTML = '<option value="">Select Street</option>';
 
             data.forEach(row => {
-                const sel = (selectedStreetId && selectedStreetId == row.id) ? 'selected' : '';
-                st.innerHTML += `<option value="${row.id}" ${sel}>${row.street}</option>`;
+                const sel = (selectedStreetId && String(selectedStreetId) === String(row.id)) ? 'selected' : '';
+                streetSelect.innerHTML += `<option value="${row.id}" ${sel}>${row.street}</option>`;
             });
         });
 }
 
-// project change
+// Project change
 document.getElementById("project_id").addEventListener("change", function () {
     loadSectors(this.value);
 });
 
-// sector change
+// Sector change
 document.getElementById("sector_id").addEventListener("change", function () {
     loadStreets(this.value);
 });
 
-// pre-fill sector/street on edit
+// Pre-fill sector/street on edit
 document.addEventListener("DOMContentLoaded", function () {
-    const projectId   = "<?= isset($record['project_id']) ? $record['project_id'] : '' ?>";
-    const sectorId    = "<?= isset($record['sector_id']) ? $record['sector_id'] : '' ?>";
-    const streetId    = "<?= isset($record['street_id']) ? $record['street_id'] : '' ?>";
+    const projectId = "<?= isset($record['project_id']) ? $record['project_id'] : '' ?>";
+    const sectorId  = "<?= isset($record['sector_id']) ? $record['sector_id'] : '' ?>";
+    const streetId  = "<?= isset($record['street_id']) ? $record['street_id'] : '' ?>";
 
     if (projectId) {
         loadSectors(projectId, sectorId);
-
         if (sectorId) {
-            // small delay to ensure sectors loaded, then load streets
             setTimeout(() => loadStreets(sectorId, streetId), 400);
         }
     }
-});
 
-// submit via AJAX
-document.getElementById("plotForm").addEventListener("submit", function (e) {
-    e.preventDefault();
+    // Submit via AJAX
+    document.getElementById("plotForm").addEventListener("submit", function (e) {
+        e.preventDefault();
 
-    const fd = new FormData(this);
+        const fd = new FormData(this);
 
-    fetch("api_plots.php", {
-        method: "POST",
-        body: fd
-    })
-        .then(r => r.json())
-        .then(res => {
-            alert(res.message || 'Done');
-            if (res.success) {
-                window.location = "plots_list.php";
-            }
+        fetch("api_plots.php", {
+            method: "POST",
+            body: fd
         })
-        .catch(err => alert("Error: " + err.message));
+            .then(r => r.json())
+            .then(res => {
+                alert(res.message || 'Done');
+                if (res.success) {
+                    window.location = "plots_list.php";
+                }
+            })
+            .catch(err => alert("Error: " + err.message));
+    });
 });
 </script>
 
