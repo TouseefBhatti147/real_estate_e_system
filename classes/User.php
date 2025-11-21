@@ -4,100 +4,141 @@ class User
     private $conn;
     private $table = "user";
 
-    public function __construct($db)
+    public function __construct($pdo)
     {
-        $this->conn = $db;
+        $this->conn = $pdo;
     }
 
-    // Get users with pagination
+    // ---------------- LOGIN ----------------
+  public function login($username, $password)
+    {
+        $sql = "SELECT * FROM {$this->table} WHERE username = ? AND password = ? LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$username, $password]);
+
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user) {
+            return $user;
+        }
+
+        return false;
+    }
+
+    // ---------------- GET ALL USERS (PDO) ----------------
     public function getAllUsers($search = "", $limit = 20, $offset = 0)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE 1";
+        $where = "";
+        $params = [];
 
         if (!empty($search)) {
-            $sql .= " AND (firstname LIKE ? OR middelname LIKE ? OR lastname LIKE ? OR username LIKE ?)";
-            $stmt = $this->conn->prepare($sql . " LIMIT ? OFFSET ?");
-            $searchTerm = "%$search%";
-            $stmt->bind_param("ssssii", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $limit, $offset);
-        } else {
-            $sql .= " ORDER BY id DESC LIMIT ? OFFSET ?";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("ii", $limit, $offset);
+            $where = "WHERE firstname LIKE ? OR lastname LIKE ? OR username LIKE ?";
+            $searchParam = "%$search%";
+            $params = [$searchParam, $searchParam, $searchParam];
         }
 
-        $stmt->execute();
-        return $stmt->get_result();
+        $sql = "
+            SELECT * FROM {$this->table}
+            $where
+            ORDER BY id DESC
+            LIMIT $limit OFFSET $offset
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Total count for pagination
+    // ---------------- TOTAL COUNT ----------------
     public function getTotalUsers($search = "")
     {
-        $sql = "SELECT COUNT(*) AS total FROM {$this->table} WHERE 1";
+        $where = "";
+        $params = [];
 
         if (!empty($search)) {
-            $sql .= " AND (firstname LIKE ? OR middelname LIKE ? OR lastname LIKE ? OR username LIKE ?)";
-            $stmt = $this->conn->prepare($sql);
-            $searchTerm = "%$search%";
-            $stmt->bind_param("ssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm);
-        } else {
-            $stmt = $this->conn->prepare($sql);
+            $where = "WHERE firstname LIKE ? OR lastname LIKE ? OR username LIKE ?";
+            $searchParam = "%$search%";
+            $params = [$searchParam, $searchParam, $searchParam];
         }
 
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
-        return $result['total'] ?? 0;
+        $sql = "SELECT COUNT(*) AS total FROM {$this->table} $where";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params);
+
+        return (int) $stmt->fetchColumn();
     }
 
-    // Get single user
+    // ---------------- GET SINGLE USER ----------------
     public function getUserById($id)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_assoc();
+        $stmt = $this->conn->prepare("SELECT * FROM {$this->table} WHERE id=?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Create user
+    // ---------------- ADD USER ----------------
     public function create($data)
     {
-        $sql = "INSERT INTO {$this->table} 
-                (firstname, middelname, lastname, sodowo, email, mobile, username, password, status, pic, create_date)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        $hash = password_hash($data['password'], PASSWORD_BCRYPT);
+
+        $sql = "INSERT INTO {$this->table}
+            (firstname, middelname, lastname, pic, sodowo, cnic, address, 
+             city_id, email, country_id, mobile, username, password, 
+             password1, status, skey, login_status, create_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', ?, '', '0', NOW())";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param(
-            "ssssssssss",
-            $data['firstname'], $data['middelname'], $data['lastname'], $data['sodowo'],
-            $data['email'], $data['mobile'], $data['username'], $data['password'],
-            $data['status'], $data['pic']
-        );
-        return $stmt->execute();
+
+        return $stmt->execute([
+            $data['firstname'], $data['middelname'], $data['lastname'], $data['pic'],
+            $data['sodowo'], $data['cnic'], $data['address'], $data['city_id'], $data['email'],
+            $data['country_id'], $data['mobile'], $data['username'], $hash, $data['status']
+        ]);
     }
 
-    // Update user
+    // ---------------- UPDATE USER ----------------
     public function update($data)
     {
-        $sql = "UPDATE {$this->table} SET 
-                firstname=?, middelname=?, lastname=?, sodowo=?, email=?, mobile=?, 
-                username=?, status=?, pic=? WHERE id=?";
+        if (!empty($data['password'])) {
+            $hash = password_hash($data['password'], PASSWORD_BCRYPT);
+
+            $sql = "UPDATE {$this->table}
+                    SET firstname=?, middelname=?, lastname=?, pic=?, sodowo=?, cnic=?, 
+                        address=?, city_id=?, email=?, country_id=?, mobile=?, 
+                        username=?, password=?, status=?
+                    WHERE id=?";
+            
+            $params = [
+                $data['firstname'], $data['middelname'], $data['lastname'], $data['pic'],
+                $data['sodowo'], $data['cnic'], $data['address'], $data['city_id'],
+                $data['email'], $data['country_id'], $data['mobile'], $data['username'],
+                $hash, $data['status'], $data['id']
+            ];
+        } else {
+            $sql = "UPDATE {$this->table}
+                    SET firstname=?, middelname=?, lastname=?, pic=?, sodowo=?, cnic=?, 
+                        address=?, city_id=?, email=?, country_id=?, mobile=?, 
+                        username=?, status=?
+                    WHERE id=?";
+            
+            $params = [
+                $data['firstname'], $data['middelname'], $data['lastname'], $data['pic'],
+                $data['sodowo'], $data['cnic'], $data['address'], $data['city_id'],
+                $data['email'], $data['country_id'], $data['mobile'], $data['username'],
+                $data['status'], $data['id']
+            ];
+        }
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param(
-            "sssssssssi",
-            $data['firstname'], $data['middelname'], $data['lastname'], $data['sodowo'],
-            $data['email'], $data['mobile'], $data['username'],
-            $data['status'], $data['pic'], $data['id']
-        );
-        return $stmt->execute();
+        return $stmt->execute($params);
     }
 
-    // Delete user
+    // ---------------- DELETE USER ----------------
     public function delete($id)
     {
-        $sql = "DELETE FROM {$this->table} WHERE id=?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $id);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("DELETE FROM {$this->table} WHERE id=?");
+        return $stmt->execute([$id]);
     }
 }

@@ -1,18 +1,20 @@
 <?php
-// Start session safely
+// Start session
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once("../includes/db_connection.php");
 require_once("../classes/User.php");
 
-// DB connection
-$db = new mysqli("localhost", "root", "", "rdlpk_db1");
-if ($db->connect_error) {
-    die("DB connection failed: " . $db->connect_error);
+// DB connection via PDO
+try {
+    $pdo = Database::getConnection();
+} catch (Exception $e) {
+    die("DB connection failed: " . $e->getMessage());
 }
 
-$userObj = new User($db);
+$userObj = new User($pdo);
 
 // pagination + search
 $search  = $_GET['q'] ?? '';
@@ -20,6 +22,7 @@ $page    = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $limit   = 20;
 $offset  = ($page - 1) * $limit;
 
+// Fetch users (PDO fetchAllARRAY)
 $list       = $userObj->getAllUsers($search, $limit, $offset);
 $totalRows  = $userObj->getTotalUsers($search);
 $totalPages = ($totalRows > 0) ? ceil($totalRows / $limit) : 1;
@@ -30,7 +33,6 @@ $totalPages = ($totalRows > 0) ? ceil($totalRows / $limit) : 1;
     <meta charset="utf-8" />
     <title>User List</title>
 
-    <!-- AdminLTE CSS -->
     <link rel="preload" href="../css/adminlte.css" as="style" />
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
@@ -48,8 +50,6 @@ $totalPages = ($totalRows > 0) ? ceil($totalRows / $limit) : 1;
             object-fit: cover;
             border-radius: 50%;
         }
-        .app-content-wrapper { overflow: visible !important; }
-        body, html { overflow-y: auto !important; }
     </style>
 </head>
 
@@ -59,16 +59,13 @@ $totalPages = ($totalRows > 0) ? ceil($totalRows / $limit) : 1;
 
     <?php include("../includes/header.php"); ?>
 
-    <!-- SIDEBAR -->
     <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
         <?php include("../includes/sidebar.php"); ?>
     </aside>
 
-    <!-- MAIN -->
     <main class="app-main">
         <div class="app-content">
 
-            <!-- PAGE HEADER -->
             <div class="app-content-header">
                 <div class="container-fluid d-flex justify-content-between align-items-center">
                     <h3 class="mb-0">Users</h3>
@@ -80,7 +77,6 @@ $totalPages = ($totalRows > 0) ? ceil($totalRows / $limit) : 1;
 
             <div class="app-content-wrapper">
 
-                <!-- SEARCH BAR -->
                 <div class="card mb-3">
                     <div class="card-body">
                         <form method="get" class="row g-2">
@@ -98,7 +94,6 @@ $totalPages = ($totalRows > 0) ? ceil($totalRows / $limit) : 1;
                     </div>
                 </div>
 
-                <!-- USER TABLE -->
                 <div class="card mb-4">
                     <div class="card-body p-0">
 
@@ -119,18 +114,15 @@ $totalPages = ($totalRows > 0) ? ceil($totalRows / $limit) : 1;
                             </thead>
 
                             <tbody>
-                            <?php if ($list && $list->num_rows > 0): ?>
-                                <?php while ($row = $list->fetch_assoc()): ?>
+                            <?php if (!empty($list)): ?>
+                                <?php foreach ($list as $row): ?>
                                 <tr id="row-<?= $row['id'] ?>">
 
                                     <td><?= $row['id'] ?></td>
 
                                     <td>
-                                        <?php if (!empty($row['pic'])): ?>
-                                            <img src="../../assets/img/user_images/<?= $row['pic'] ?>" class="user-avatar">
-                                        <?php else: ?>
-                                            <img src="../../assets/img/user_images/no_image.png" class="user-avatar">
-                                        <?php endif; ?>
+                                        <img src="../../assets/img/user_images/<?= $row['pic'] ?: 'no_image.png' ?>"
+                                             class="user-avatar">
                                     </td>
 
                                     <td><?= htmlspecialchars($row['firstname']) ?></td>
@@ -150,22 +142,21 @@ $totalPages = ($totalRows > 0) ? ceil($totalRows / $limit) : 1;
                                     <td><?= date("d-m-Y", strtotime($row['create_date'])) ?></td>
 
                                     <td>
-                                        <a href="user_profile.php?id=<?= $row['id'] ?>"
-                                           class="btn btn-info btn-sm me-1">
-                                           <i class="bi bi-eye"></i></a>
+                                        <a href="user_profile.php?id=<?= $row['id'] ?>" class="btn btn-info btn-sm me-1">
+                                           <i class="bi bi-eye"></i>
+                                        </a>
 
-                                        <a href="form_user.php?id=<?= $row['id'] ?>"
-                                           class="btn btn-warning btn-sm me-1">
-                                           <i class="bi bi-pencil"></i></a>
+                                        <a href="form_user.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm me-1">
+                                           <i class="bi bi-pencil"></i>
+                                        </a>
 
-                                        <button class="btn btn-danger btn-sm"
-                                                onclick="deleteUser(<?= $row['id'] ?>)">
+                                        <button class="btn btn-danger btn-sm" onclick="deleteUser(<?= $row['id'] ?>)">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </td>
 
                                 </tr>
-                                <?php endwhile; ?>
+                                <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
                                     <td colspan="10" class="text-center text-muted py-3">
@@ -179,10 +170,8 @@ $totalPages = ($totalRows > 0) ? ceil($totalRows / $limit) : 1;
 
                     </div>
 
-                    <!-- PAGINATION -->
                     <div class="card-footer clearfix">
                         <ul class="pagination pagination-sm m-0 float-end">
-
                             <li class="page-item <?= ($page <= 1 ? 'disabled' : '') ?>">
                                 <a class="page-link" href="?page=<?= $page - 1 ?>&q=<?= urlencode($search) ?>">«</a>
                             </li>
@@ -204,6 +193,7 @@ $totalPages = ($totalRows > 0) ? ceil($totalRows / $limit) : 1;
                     </div>
 
                 </div>
+
             </div>
 
         </div>
@@ -213,14 +203,7 @@ $totalPages = ($totalRows > 0) ? ceil($totalRows / $limit) : 1;
 
 </div>
 
-<!-- AdminLTE Required JS -->
-<script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"></script>
-<script src="../js/adminlte.js"></script>
-
 <script>
-// DELETE USER
 function deleteUser(id) {
     if (!confirm("Do you want to delete this user?")) return;
 
@@ -228,14 +211,17 @@ function deleteUser(id) {
     fd.append("action", "delete");
     fd.append("id", id);
 
-    fetch("api_users.php", { method: "POST", body: fd })
-        .then(r => r.json())
-        .then(res => {
-            alert(res.message);
-            if (res.success) {
-                document.getElementById("row-" + id).remove();
-            }
-        });
+    fetch("api_users.php", {
+        method: "POST",
+        body: fd
+    })
+    .then(r => r.json())
+    .then(res => {
+        alert(res.message);
+        if (res.success) {
+            document.getElementById("row-" + id).remove();
+        }
+    });
 }
 </script>
 

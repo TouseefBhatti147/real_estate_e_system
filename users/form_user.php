@@ -1,11 +1,21 @@
 <?php
-require_once("../classes/User.php");
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-$db = new mysqli("localhost", "root", "", "rdlpk_db1");
-$userObj = new User($db);
+require_once '../includes/db_connection.php';
+require_once '../classes/User.php';
 
-$id = $_GET['id'] ?? null;
-$record = null;
+try {
+    $pdo = Database::getConnection();
+} catch (Exception $e) {
+    die("DB connection failed");
+}
+
+$userObj = new User($pdo);
+
+$id      = $_GET['id'] ?? null;
+$record  = null;
 
 if ($id) {
     $record = $userObj->getUserById($id);
@@ -63,49 +73,54 @@ if ($id) {
                     <div class="col-md-4">
                         <label>First Name</label>
                         <input type="text" name="firstname" class="form-control" required
-                               value="<?= $record['firstname'] ?? '' ?>">
+                               value="<?= htmlspecialchars($record['firstname'] ?? '') ?>">
                     </div>
 
                     <div class="col-md-4">
                         <label>Middle Name</label>
                         <input type="text" name="middelname" class="form-control"
-                               value="<?= $record['middelname'] ?? '' ?>">
+                               value="<?= htmlspecialchars($record['middelname'] ?? '') ?>">
                     </div>
 
                     <div class="col-md-4">
                         <label>Last Name</label>
                         <input type="text" name="lastname" class="form-control"
-                               value="<?= $record['lastname'] ?? '' ?>">
+                               value="<?= htmlspecialchars($record['lastname'] ?? '') ?>">
                     </div>
 
                     <div class="col-md-4">
                         <label>Father / Spouse Name</label>
                         <input type="text" name="sodowo" class="form-control"
-                               value="<?= $record['sodowo'] ?? '' ?>">
+                               value="<?= htmlspecialchars($record['sodowo'] ?? '') ?>">
                     </div>
 
                     <div class="col-md-4">
                         <label>Email</label>
                         <input type="email" name="email" class="form-control"
-                               value="<?= $record['email'] ?? '' ?>">
+                               value="<?= htmlspecialchars($record['email'] ?? '') ?>">
                     </div>
 
                     <div class="col-md-4">
                         <label>Mobile</label>
                         <input type="text" name="mobile" class="form-control"
-                               value="<?= $record['mobile'] ?? '' ?>">
+                               value="<?= htmlspecialchars($record['mobile'] ?? '') ?>">
                     </div>
 
                     <div class="col-md-4">
                         <label>Username</label>
                         <input type="text" name="username" class="form-control" required
-                               value="<?= $record['username'] ?? '' ?>">
+                               value="<?= htmlspecialchars($record['username'] ?? '') ?>">
                     </div>
 
                     <?php if (!$id): ?>
                     <div class="col-md-4">
                         <label>Password</label>
                         <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <?php else: ?>
+                    <div class="col-md-4">
+                        <label>New Password (leave blank to keep current)</label>
+                        <input type="password" name="password" class="form-control">
                     </div>
                     <?php endif; ?>
 
@@ -124,7 +139,7 @@ if ($id) {
 
                     <div class="col-md-4">
                         <?php if (!empty($record['pic'])): ?>
-                            <img src="../../assets/img/user_images/<?= $record['pic'] ?>"
+                            <img src="../../assets/img/user_images/<?= htmlspecialchars($record['pic']) ?>"
                                  class="user-avatar-preview mt-2">
                         <?php else: ?>
                             <p class="text-muted mt-3">No image</p>
