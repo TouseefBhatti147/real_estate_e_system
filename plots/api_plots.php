@@ -7,6 +7,7 @@ header('Content-Type: application/json');
 
 require_once("../classes/Plot.php");
 
+// --- DB connection ---
 $db = new mysqli("localhost", "root", "", "rdlpk_db1");
 if ($db->connect_error) {
     echo json_encode([
@@ -27,8 +28,8 @@ switch ($action) {
 
         $data = [
             'project_id'          => (int)($_POST['project_id'] ?? 0),
-            'sector_id'           => trim($_POST['sector_id'] ?? ''),
-            'street_id'           => trim($_POST['street_id'] ?? ''),
+            'sector_id'           => (int)($_POST['sector_id'] ?? 0),
+            'street_id'           => (int)($_POST['street_id'] ?? 0),
             'plot_detail_address' => trim($_POST['plot_detail_address'] ?? ''),
             'plot_size'           => trim($_POST['plot_size'] ?? ''),
             'size_cat_id'         => (int)($_POST['size_cat_id'] ?? 0),
@@ -40,6 +41,23 @@ switch ($action) {
             'plot_dimension'      => trim($_POST['plot_dimension'] ?? ''),
             'status'              => trim($_POST['status'] ?? '')
         ];
+
+        // basic validation
+        if (
+            $data['project_id'] <= 0 ||
+            $data['sector_id'] <= 0 ||
+            $data['street_id'] <= 0 ||
+            $data['plot_detail_address'] === '' ||
+            $data['plot_size'] === '' ||
+            $data['category_id'] <= 0 ||
+            $data['status'] === ''
+        ) {
+            echo json_encode([
+                "success" => false,
+                "message" => "Please fill all required fields."
+            ]);
+            exit;
+        }
 
         $ok = $plotObj->add($data);
 
@@ -55,8 +73,8 @@ switch ($action) {
         $data = [
             'id'                  => (int)($_POST['id'] ?? 0),
             'project_id'          => (int)($_POST['project_id'] ?? 0),
-            'sector_id'           => trim($_POST['sector_id'] ?? ''),
-            'street_id'           => trim($_POST['street_id'] ?? ''),
+            'sector_id'           => (int)($_POST['sector_id'] ?? 0),
+            'street_id'           => (int)($_POST['street_id'] ?? 0),
             'plot_detail_address' => trim($_POST['plot_detail_address'] ?? ''),
             'plot_size'           => trim($_POST['plot_size'] ?? ''),
             'size_cat_id'         => (int)($_POST['size_cat_id'] ?? 0),
@@ -68,6 +86,14 @@ switch ($action) {
             'plot_dimension'      => trim($_POST['plot_dimension'] ?? ''),
             'status'              => trim($_POST['status'] ?? '')
         ];
+
+        if ($data['id'] <= 0) {
+            echo json_encode([
+                "success" => false,
+                "message" => "Invalid plot ID."
+            ]);
+            exit;
+        }
 
         $ok = $plotObj->update($data);
 
@@ -98,6 +124,7 @@ switch ($action) {
         $rows = [];
         if ($res) {
             while ($r = $res->fetch_assoc()) {
+                // will contain: sector_id, sector_name
                 $rows[] = $r;
             }
         }
@@ -114,6 +141,7 @@ switch ($action) {
         $rows = [];
         if ($res) {
             while ($r = $res->fetch_assoc()) {
+                // will contain: id, street
                 $rows[] = $r;
             }
         }

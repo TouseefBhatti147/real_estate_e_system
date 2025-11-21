@@ -134,22 +134,23 @@ class Plot
             return false;
         }
 
-        // Types: i s s s s i i s s i s s s  (13 params)
+        // project_id (i), sector_id (i), street_id (i) – stored as numeric IDs
+        // Types: i i i s s i i s s i s s s   = 13 params
         $stmt->bind_param(
-            "issssiississs",
-            $data['project_id'],        // i
-            $data['sector_id'],         // s
-            $data['street_id'],         // s
+            "iiissiississs",
+            $data['project_id'],          // i
+            $data['sector_id'],           // i
+            $data['street_id'],           // i
             $data['plot_detail_address'], // s
-            $data['plot_size'],         // s
-            $data['size_cat_id'],       // i
-            $data['installment'],       // i
-            $data['price'],             // s
-            $data['basic_price'],       // s
-            $data['category_id'],       // i
-            $data['location'],          // s
-            $data['plot_dimension'],    // s
-            $data['status']             // s
+            $data['plot_size'],           // s
+            $data['size_cat_id'],         // i
+            $data['installment'],         // i
+            $data['price'],               // s
+            $data['basic_price'],         // s
+            $data['category_id'],         // i
+            $data['location'],            // s
+            $data['plot_dimension'],      // s
+            $data['status']               // s
         );
 
         return $stmt->execute();
@@ -183,24 +184,24 @@ class Plot
             return false;
         }
 
-        // 14 params: same 13 as add() + id
-        // Types: i s s s s i i s s i s s s i
+        // 14 params: same as add() + id
+        // Types: i i i s s i i s s i s s s i
         $stmt->bind_param(
-            "issssiississsi",
-            $data['project_id'],        // i
-            $data['sector_id'],         // s
-            $data['street_id'],         // s
+            "iiissiississsi",
+            $data['project_id'],          // i
+            $data['sector_id'],           // i
+            $data['street_id'],           // i
             $data['plot_detail_address'], // s
-            $data['plot_size'],         // s
-            $data['size_cat_id'],       // i
-            $data['installment'],       // i
-            $data['price'],             // s
-            $data['basic_price'],       // s
-            $data['category_id'],       // i
-            $data['location'],          // s
-            $data['plot_dimension'],    // s
-            $data['status'],            // s
-            $data['id']                 // i
+            $data['plot_size'],           // s
+            $data['size_cat_id'],         // i
+            $data['installment'],         // i
+            $data['price'],               // s
+            $data['basic_price'],         // s
+            $data['category_id'],         // i
+            $data['location'],            // s
+            $data['plot_dimension'],      // s
+            $data['status'],              // s
+            $data['id']                   // i
         );
 
         return $stmt->execute();
@@ -216,7 +217,7 @@ class Plot
     }
 
     // ---------------------------------------------------------
-    // SECTORS BY PROJECT
+    // SECTORS BY PROJECT  ✅ uses sectors.sector_id + project_id (varchar)
     // ---------------------------------------------------------
     public function getSectorsByProject($projectId)
     {
@@ -225,13 +226,13 @@ class Plot
         return $this->db->query("
             SELECT sector_id, sector_name
             FROM sectors
-            WHERE TRIM(project_id) = '$projectId'
+            WHERE project_id = '$projectId'
             ORDER BY sector_name
         ");
     }
 
     // ---------------------------------------------------------
-    // STREETS BY SECTOR
+    // STREETS BY SECTOR  ✅ streets.sector_id must store sector_id
     // ---------------------------------------------------------
     public function getStreetsBySector($sectorId)
     {
@@ -240,7 +241,7 @@ class Plot
         return $this->db->query("
             SELECT id, street
             FROM streets
-            WHERE TRIM(sector_id) = '$sectorId'
+            WHERE sector_id = '$sectorId'
             ORDER BY street
         ");
     }

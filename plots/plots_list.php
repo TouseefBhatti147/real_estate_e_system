@@ -39,8 +39,6 @@ $totalPages = ($totalRows > 0) ? ceil($totalRows / $limit) : 1;
 
 // dropdown data
 $projects = $db->query("SELECT id, project_name FROM projects ORDER BY project_name");
-$sectors  = $db->query("SELECT sector_id, sector_name FROM sectors ORDER BY sector_name");
-$streets  = $db->query("SELECT id, street FROM streets ORDER BY street");
 $sizeCats = $db->query("SELECT id, size FROM size_cat ORDER BY size");
 $propTypes= $db->query("SELECT property_type_id, title FROM property_types ORDER BY title");
 
@@ -63,6 +61,8 @@ $queryBase = http_build_query([
     <link rel="stylesheet" href="../css/adminlte.css" />
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" />
+    <!-- jQuery (needed for dynamic dropdowns) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -94,9 +94,10 @@ $queryBase = http_build_query([
                         <form method="get">
 
                             <div class="row g-3 mb-2">
+                                <!-- PROJECT -->
                                 <div class="col-md-3">
                                     <label class="form-label mb-1">Project</label>
-                                    <select name="project_id" class="form-select">
+                                    <select name="project_id" id="projectSelect" class="form-select">
                                         <option value="0">All</option>
                                         <?php if ($projects): ?>
                                             <?php while ($p = $projects->fetch_assoc()): ?>
@@ -109,36 +110,25 @@ $queryBase = http_build_query([
                                     </select>
                                 </div>
 
+                                <!-- SECTOR (loaded dynamically by project) -->
                                 <div class="col-md-3">
                                     <label class="form-label mb-1">Sector</label>
-                                    <select name="sector_id" class="form-select">
+                                    <select name="sector_id" id="sectorSelect" class="form-select">
                                         <option value="">All</option>
-                                        <?php if ($sectors): ?>
-                                            <?php while ($sec = $sectors->fetch_assoc()): ?>
-                                                <option value="<?= htmlspecialchars($sec['sector_id']) ?>"
-                                                    <?= $sectorId == $sec['sector_id'] ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($sec['sector_name']) ?>
-                                                </option>
-                                            <?php endwhile; ?>
-                                        <?php endif; ?>
+                                        <!-- options will be loaded via AJAX from api_plots.php?action=load_sectors -->
                                     </select>
                                 </div>
 
+                                <!-- STREET (loaded dynamically by sector) -->
                                 <div class="col-md-3">
                                     <label class="form-label mb-1">Street</label>
-                                    <select name="street_id" class="form-select">
+                                    <select name="street_id" id="streetSelect" class="form-select">
                                         <option value="">All</option>
-                                        <?php if ($streets): ?>
-                                            <?php while ($s = $streets->fetch_assoc()): ?>
-                                                <option value="<?= htmlspecialchars($s['id']) ?>"
-                                                    <?= $streetId == $s['id'] ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($s['street']) ?>
-                                                </option>
-                                            <?php endwhile; ?>
-                                        <?php endif; ?>
+                                        <!-- options will be loaded via AJAX from api_plots.php?action=load_streets -->
                                     </select>
                                 </div>
 
+                                <!-- SIZE CATEGORY -->
                                 <div class="col-md-3">
                                     <label class="form-label mb-1">Size Category</label>
                                     <select name="size_cat_id" class="form-select">
@@ -156,6 +146,7 @@ $queryBase = http_build_query([
                             </div>
 
                             <div class="row g-3 align-items-end">
+                                <!-- PROPERTY TYPE -->
                                 <div class="col-md-3">
                                     <label class="form-label mb-1">Property Type</label>
                                     <select name="property_type" class="form-select">
@@ -171,6 +162,7 @@ $queryBase = http_build_query([
                                     </select>
                                 </div>
 
+                                <!-- SEARCH -->
                                 <div class="col-md-4">
                                     <label class="form-label mb-1">Search</label>
                                     <input type="text" name="q"
@@ -179,6 +171,7 @@ $queryBase = http_build_query([
                                            value="<?= htmlspecialchars($search) ?>">
                                 </div>
 
+                                <!-- BUTTONS -->
                                 <div class="col-md-3">
                                     <button type="submit" class="btn btn-primary w-100 mb-1">Search</button>
                                     <a href="plots_list.php" class="btn btn-secondary w-100">Reset</a>
@@ -285,6 +278,7 @@ $queryBase = http_build_query([
 <script src="../js/adminlte.js"></script>
 
 <script>
+// Delete plot (already working)
 function deletePlot(id) {
     if (!confirm("Delete this plot?")) return;
 
@@ -305,6 +299,93 @@ function deletePlot(id) {
             }
         });
 }
+
+// === Dynamic dropdowns using api_plots.php (load_sectors, load_streets) ===
+const currentProjectId = <?= json_encode($projectId) ?>;
+const currentSectorId  = <?= json_encode($sectorId) ?>;
+const currentStreetId  = <?= json_encode($streetId) ?>;
+
+// Load sectors for a given project
+function loadSectors(projectId, selectedSectorId = '') {
+    const $sector = $('#sectorSelect');
+    const $street = $('#streetSelect');
+
+    if (!projectId || projectId === '0') {
+        $sector.html('<option value="">All</option>');
+        $street.html('<option value="">All</option>');
+        return;
+    }
+
+    $.getJSON('api_plots.php', {
+        action: 'load_sectors',
+        project_id: projectId
+    }, function (res) {
+        let html = '<option value="">All</option>';
+
+        if (Array.isArray(res) && res.length > 0) {
+            res.forEach(function (sec) {
+                const selected = (selectedSectorId && selectedSectorId == sec.sector_id) ? 'selected' : '';
+                html += `<option value="${sec.sector_id}" ${selected}>${sec.sector_name}</option>`;
+            });
+        }
+
+        $sector.html(html);
+
+        // if sector changed manually, reset streets
+        if (!selectedSectorId) {
+            $street.html('<option value="">All</option>');
+        }
+    });
+}
+
+// Load streets for a given sector
+function loadStreets(sectorId, selectedStreetId = '') {
+    const $street = $('#streetSelect');
+
+    if (!sectorId) {
+        $street.html('<option value="">All</option>');
+        return;
+    }
+
+    $.getJSON('api_plots.php', {
+        action: 'load_streets',
+        sector_id: sectorId
+    }, function (res) {
+        let html = '<option value="">All</option>';
+
+        if (Array.isArray(res) && res.length > 0) {
+            res.forEach(function (st) {
+                const selected = (selectedStreetId && selectedStreetId == st.id) ? 'selected' : '';
+                html += `<option value="${st.id}" ${selected}>${st.street}</option>`;
+            });
+        }
+
+        $street.html(html);
+    });
+}
+
+$(document).ready(function () {
+    // Initial load when page opens (keep selected filters from GET)
+    if (currentProjectId) {
+        loadSectors(currentProjectId, currentSectorId);
+    }
+    if (currentSectorId) {
+        loadStreets(currentSectorId, currentStreetId);
+    }
+
+    // When project changes → reload sectors and reset streets
+    $('#projectSelect').on('change', function () {
+        const pid = $(this).val();
+        loadSectors(pid, '');
+        $('#streetSelect').html('<option value="">All</option>');
+    });
+
+    // When sector changes → reload streets
+    $('#sectorSelect').on('change', function () {
+        const sid = $(this).val();
+        loadStreets(sid, '');
+    });
+});
 </script>
 
 </body>

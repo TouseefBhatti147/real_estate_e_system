@@ -12,7 +12,7 @@ class Street {
         $query = "SELECT s.*, p.project_name, sec.sector_name 
                   FROM {$this->table} s
                   LEFT JOIN projects p ON s.project_id = p.id
-                  LEFT JOIN sectors sec ON s.sector_id = sec.id
+                  LEFT JOIN sectors sec ON s.sector_id = sec.sector_id
                   ORDER BY s.id DESC";
         return $this->conn->query($query);
     }

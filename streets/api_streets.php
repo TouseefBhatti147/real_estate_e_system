@@ -35,7 +35,7 @@ if ($method === 'GET') {
         $whereParts[] = "s.project_id = $projectId";
     }
     if ($sectorId > 0) {
-        // sector_id column is varchar but stores sector's ID – comparison still works
+        // ✅ sector_id is INT in streets & sectors
         $whereParts[] = "s.sector_id = $sectorId";
     }
 
@@ -62,7 +62,7 @@ if ($method === 'GET') {
             sec.sector_name
         FROM streets s
         LEFT JOIN projects p ON s.project_id = p.id
-        LEFT JOIN sectors  sec ON s.sector_id = sec.id
+        LEFT JOIN sectors  sec ON s.sector_id = sec.sector_id
         $where
         ORDER BY s.id DESC
         LIMIT $limit OFFSET $offset
@@ -130,7 +130,7 @@ if ($method === 'POST') {
     // --- Common fields for Add / Update ---
     $id         = intval($_POST['id'] ?? 0);
     $project_id = intval($_POST['project_id'] ?? 0);
-    $sector_id  = intval($_POST['sector_id'] ?? 0); // stored as varchar but numeric ID is fine
+    $sector_id  = intval($_POST['sector_id'] ?? 0); // ✅ INT
     $street     = trim($_POST['street'] ?? '');
 
     if ($project_id <= 0 || $sector_id <= 0 || $street === '') {
@@ -158,9 +158,7 @@ if ($method === 'POST') {
             exit;
         }
 
-        // sector_id column is varchar, so bind as string
-        $sectorIdStr = (string)$sector_id;
-        $stmt->bind_param("issss", $project_id, $sectorIdStr, $street, $now, $now);
+        $stmt->bind_param("iisss", $project_id, $sector_id, $street, $now, $now);
         $success = $stmt->execute();
         $stmt->close();
 
@@ -195,8 +193,7 @@ if ($method === 'POST') {
             exit;
         }
 
-        $sectorIdStr = (string)$sector_id;
-        $stmt->bind_param("isssi", $project_id, $sectorIdStr, $street, $now, $id);
+        $stmt->bind_param("iissi", $project_id, $sector_id, $street, $now, $id);
         $success = $stmt->execute();
         $stmt->close();
 
