@@ -1,23 +1,121 @@
+<?php
+include __DIR__ . '../../includes/config.php';
+?>
+
 <div class="sidebar-wrapper">
   <nav class="mt-2">
     <!--begin::Sidebar Menu-->
-     <!-- client sidebar menu -->
- <ul
-      class="  nav sidebar-menu flex-column"
+    <!-- client sidebar menu -->
+    <ul
+      class="d-none  nav sidebar-menu flex-column"
       data-lte-toggle="treeview"
       role="navigation"
       aria-label="Main navigation"
       data-accordion="false"
-      id="navigation"
-    >
+      id="navigation">
       <li class="nav-item">
-        <a href="../index.php" class="nav-link active">
+        <a href="<?= $base ?>index.php" class="nav-link active">
           <i class="nav-icon bi bi-speedometer"></i>
           <p>Client Dashboard</p>
         </a>
       </li>
 
-     
+
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="nav-icon bi bi-building"></i>
+          <p>
+            Property
+            <i class="nav-arrow bi bi-chevron-right"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="<?= $base ?>client/property/booking.php" class="nav-link">
+              <i class="nav-icon bi bi-circle"></i>
+              <p>Booking</p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="<?= $base ?>client/property/transfer.php" class="nav-link">
+              <i class="nav-icon bi bi-circle"></i>
+              <p>Allotments/Transfer</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="<?= $base ?>client/property/membership.php" class="nav-link">
+              <i class="nav-icon bi bi-circle"></i>
+              <p>Joint Memberships</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="<?= $base ?>client/property/transferProcess.php" class="nav-link">
+              <i class="nav-icon bi bi-circle"></i>
+              <p>Transfer in Process</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="<?= $base ?>client/property/cancellation.php" class="nav-link">
+              <i class="nav-icon bi bi-circle"></i>
+              <p>Cancellation in Process</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="nav-icon bi bi-building"></i>
+          <p>
+            Accounts
+            <i class="nav-arrow bi bi-chevron-right"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="<?= $base ?>client/accounts/paymentSummery.php" class="nav-link">
+              <i class="nav-icon bi bi-circle"></i>
+              <p>Payment Summary</p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="<?= $base ?>client/accounts/transactionHistory.php" class="nav-link">
+              <i class="nav-icon bi bi-circle"></i>
+              <p>Transaction History</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="nav-icon bi bi-building"></i>
+          <p>
+            Profile
+            <i class="nav-arrow bi bi-chevron-right"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="<?= $base ?>client/profile/myProfile.php" class="nav-link">
+              <i class="nav-icon bi bi-circle"></i>
+              <p>My Profile</p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="<?= $base ?>client/profile/changePassword.php" class="nav-link">
+              <i class="nav-icon bi bi-circle"></i>
+              <p>Change Password</p>
+            </a>
+          </li>
+
+
+        </ul>
+      </li>
     </ul>
 
 
@@ -27,13 +125,12 @@
 
     <!-- // Admin sidebar menu -->
     <ul
-      class="d-none nav sidebar-menu flex-column"
+      class="  nav sidebar-menu flex-column"
       data-lte-toggle="treeview"
       role="navigation"
       aria-label="Main navigation"
       data-accordion="false"
-      id="navigation"
-    >
+      id="navigation">
       <li class="nav-item">
         <a href="../index.php" class="nav-link active">
           <i class="nav-icon bi bi-speedometer"></i>
@@ -57,7 +154,7 @@
               <p>Projects</p>
             </a>
           </li>
-      
+
           <li class="nav-item">
             <a href="sectors.php" class="nav-link">
               <i class="nav-icon bi bi-circle"></i>
@@ -76,7 +173,7 @@
               <p>Plot Size Categories</p>
             </a>
           </li>
-           <li class="nav-item">
+          <li class="nav-item">
             <a href="property_types.php" class="nav-link">
               <i class="nav-icon bi bi-circle"></i>
               <p>Property Types</p>
@@ -85,7 +182,7 @@
         </ul>
       </li>
 
- 
+
 
       <!-- Finance & Sales -->
       <li class="nav-item">
@@ -121,8 +218,8 @@
               <p>Banks</p>
             </a>
           </li>
-          
-           <li class="nav-item">
+
+          <li class="nav-item">
             <a href="sales_center.php" class="nav-link">
               <i class="nav-icon bi bi-circle"></i>
               <p>Sales Center</p>
@@ -130,7 +227,7 @@
           </li>
         </ul>
       </li>
-      
+
       <!-- Users & Members -->
       <li class="nav-item">
         <a href="#" class="nav-link">
@@ -148,7 +245,7 @@
               <span class="nav-badge badge text-bg-success me-3"></span>
             </a>
           </li>
-       
+
           <li class="nav-item">
             <a href="users.php" class="nav-link">
               <i class="nav-icon bi bi-circle"></i>
@@ -181,12 +278,12 @@
               <p>Receipt Reports</p>
             </a>
           </li>
-        
+
         </ul>
       </li>
-      
-     
-      
+
+
+
       <!-- Media & Website -->
       <li class="nav-item">
         <a href="#" class="nav-link">
@@ -221,12 +318,12 @@
               <p>Downloads</p>
             </a>
           </li>
-         
+
         </ul>
       </li>
 
       <li class="nav-header">SYSTEM</li>
-      
+
       <!-- Operations -->
       <li class="nav-item">
         <a href="#" class="nav-link">
@@ -243,13 +340,13 @@
               <p>Security</p>
             </a>
           </li>
-       
+
         </ul>
       </li>
-      
+
       <!-- Settings -->
       <li class="nav-item">
-     
+
         <ul class="nav nav-treeview">
           <li class="nav-item">
             <a href="pages.php" class="nav-link">
@@ -263,7 +360,7 @@
               <p>Manage Country</p>
             </a>
           </li>
-       
+
         </ul>
       </li>
 
@@ -271,4 +368,3 @@
     <!--end::Sidebar Menu-->
   </nav>
 </div>
-
