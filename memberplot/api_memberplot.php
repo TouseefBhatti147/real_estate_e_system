@@ -1,89 +1,80 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+header('Content-Type: application/json');
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 require_once("../classes/MemberPlot.php");
 
-$db = new mysqli("localhost", "root", "", "rdlpk_db1");
-if ($db->connect_error) {
-    if (isset($_POST['action']) && $_POST['action'] === 'delete') {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'DB connection failed']);
-        exit;
-    }
-    die("DB connection failed: " . $db->connect_error);
-}
-
-$mpObj          = new MemberPlot($db);
-$action         = $_POST['action'] ?? '';
-$uidFromSession = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
-
-if ($action === 'add') {
-
-    $createDate = !empty($_POST['create_date'])
-        ? date('Y-m-d H:i:s', strtotime($_POST['create_date']))
-        : date('Y-m-d H:i:s');
-
-    $data = [
-        'plot_id'     => $_POST['plot_id'] ?? 0,
-        'member_id'   => $_POST['member_id'] ?? 0,
-        'create_date' => $createDate,
-        'noi'         => $_POST['noi'] ?? '',
-        'insplan'     => $_POST['insplan'] ?? 0,
-        'status'      => $_POST['status'] ?? 'Approved',
-        'plotno'      => $_POST['plotno'] ?? '',
-        'msno'        => $_POST['msno'] ?? '',
-        'uid'         => $uidFromSession,
-    ];
-
-    if ($mpObj->create($data)) {
-        header("Location: memberplot_list.php?msg=Record+added+successfully");
-    } else {
-        header("Location: form_memberplot.php?error=Add+failed");
-    }
+// DB
+$db = new mysqli("localhost","root","","rdlpk_db1");
+if($db->connect_error){
+    echo json_encode(['success'=>false,'message'=>'DB connection failed']);
     exit;
 }
 
-if ($action === 'update') {
+$mpObj  = new MemberPlot($db);
+$action = $_POST['action'] ?? $_GET['action'] ?? '';
 
-    $createDate = !empty($_POST['create_date'])
-        ? date('Y-m-d H:i:s', strtotime($_POST['create_date']))
-        : date('Y-m-d H:i:s');
+if ($action === 'add' || $action === 'update') {
+
+    $id         = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+    $plot_id    = (int)($_POST['plot_id'] ?? 0);
+    $member_id  = (int)($_POST['member_id'] ?? 0);
+    $createDate = $_POST['create_date'] ?? '';
+    $noi        = $_POST['noi'] ?? '1';
+    $insplan    = (int)($_POST['insplan'] ?? 0);
+    $msno       = $_POST['msno'] ?? '';
+    $uid        = isset($_POST['uid']) ? (int)$_POST['uid'] : (int)($_SESSION['user_id'] ?? 0);
+
+    if ($plot_id <= 0 || $member_id <= 0) {
+        echo json_encode(['success'=>false,'message'=>'Please select plot and member']);
+        exit;
+    }
 
     $data = [
-        'id'          => $_POST['id'] ?? 0,
-        'plot_id'     => $_POST['plot_id'] ?? 0,
-        'member_id'   => $_POST['member_id'] ?? 0,
+        'id'          => $id,
+        'plot_id'     => $plot_id,
+        'member_id'   => $member_id,
         'create_date' => $createDate,
-        'noi'         => $_POST['noi'] ?? '',
-        'insplan'     => $_POST['insplan'] ?? 0,
-        'status'      => $_POST['status'] ?? 'Approved',
-        'plotno'      => $_POST['plotno'] ?? '',
-        'msno'        => $_POST['msno'] ?? '',
-        'uid'         => $uidFromSession,
+        'noi'         => $noi,
+        'insplan'     => $insplan,
+        'status'      => 'Approved',
+        'plotno'      => '',     // keep blank for now
+        'msno'        => $msno,
+        'uid'         => $uid
     ];
 
-    if ($mpObj->update($data)) {
-        header("Location: memberplot_list.php?msg=Record+updated+successfully");
+    if ($action === 'add') {
+        $ok = $mpObj->add($data);
+        echo json_encode([
+            'success' => $ok,
+            'message' => $ok ? 'Assignment saved successfully' : 'Failed to save assignment'
+        ]);
     } else {
-        header("Location: form_memberplot.php?id=" . (int)$data['id'] . "&error=Update+failed");
+        if ($id <= 0) {
+            echo json_encode(['success'=>false,'message'=>'Missing ID for update']);
+            exit;
+        }
+        $ok = $mpObj->update($data);
+        echo json_encode([
+            'success' => $ok,
+            'message' => $ok ? 'Assignment updated successfully' : 'Failed to update assignment'
+        ]);
     }
     exit;
 }
 
 if ($action === 'delete') {
-    header('Content-Type: application/json');
-
-    $id = $_POST['id'] ?? 0;
-    if ($mpObj->delete($id)) {
-        echo json_encode(['success' => true, 'message' => 'Record deleted']);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Delete failed']);
+    $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
+    if ($id <= 0) {
+        echo json_encode(['success'=>false,'message'=>'Invalid ID']);
+        exit;
     }
+    $ok = $mpObj->delete($id);
+    echo json_encode([
+        'success' => $ok,
+        'message' => $ok ? 'Assignment deleted' : 'Delete failed'
+    ]);
     exit;
 }
 
-// fallback
-header("Location: memberplot_list.php?error=Invalid+action");
-exit;
+echo json_encode(['success'=>false,'message'=>'Invalid action']);

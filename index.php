@@ -52,29 +52,40 @@
                 <div class="container-fluid">
 
                     <!-- Reports -->
-                    <div class="section-title">Reports</div>
+                    <div class="section-title">Property </div>
                     <hr />
                     <div class="row g-3">
 
                         <div class="col-md-3">
-                            <a class="a" href="reports/plots_report.php">
+                            <a class="a" href="memberplot/memberplot_list.php">
                                 <div class="info-box">
                                     <span class="info-box-icon"><i class="bi bi-tag-fill"></i></span>
                                     <div class="info-box-content">
-                                        <span class="info-box-text">Plots Report</span>
-                                        <span class="info-box-number">5,200</span>
+                                        <span class="info-box-text">Manage Plots Allotment</span>
+                                        <span class="info-box-number"></span>
                                     </div>
                                 </div>
                             </a>
                         </div>
 
                         <div class="col-md-3">
-                            <a class="a" href="reports/receipt_report.php">
+                            <a class="a" href="transfer/tranferplots_list.php">
                                 <div class="info-box">
                                     <span class="info-box-icon"><i class="bi bi-receipt-cutoff"></i></span>
                                     <div class="info-box-content">
-                                        <span class="info-box-text">Receipt Reports</span>
-                                        <span class="info-box-number">92,050</span>
+                                        <span class="info-box-text">Manage Transfer </span>
+                                        <span class="info-box-number"></span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a class="a" href="plots/plots_list.php">
+                                <div class="info-box">
+                                    <span class="info-box-icon"><i class="bi bi-receipt-cutoff"></i></span>
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">Manage Plots </span>
+                                        <span class="info-box-number"></span>
                                     </div>
                                 </div>
                             </a>
@@ -348,9 +359,8 @@
       <div class="app-content">
         <div class="container-fluid">
 
-          <!-- ?php include("client-dashboard.php"); ?> -->
-
-          <?php include("admin-dashboard.php"); ?>
+          <?php // include("client-dashboard.php"); ?> 
+ <?php include("admin-dashboard.php"); ?> 
 
         </div>
       </div>

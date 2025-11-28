@@ -1,61 +1,115 @@
 <?php
 class MemberPlot
 {
+    /** @var mysqli */
     private $conn;
     private $table = "memberplot";
 
-    public function __construct($db)
+    public function __construct(mysqli $db)
     {
         $this->conn = $db;
     }
 
-    // Get data with search + pagination
-    public function getAll($search = '', $limit = 20, $offset = 0)
+    /**
+     * Get list with joins (projects, sectors, streets, plots, member, user)
+     * $filters = ['search' => '...']
+     */
+    public function getAll(array $filters, int $limit, int $offset)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE 1";
+        $sql = "
+            SELECT 
+                mp.*,
+                p.plot_size,
+                pr.project_name,
+                sec.sector_name,
+                st.street AS street_name,
+                m.name AS member_name,
+                u.username AS assigned_user
+            FROM {$this->table} mp
+            LEFT JOIN plots    p   ON p.id = mp.plot_id
+            LEFT JOIN projects pr  ON pr.id = p.project_id
+            LEFT JOIN sectors  sec ON sec.sector_id = p.sector_id
+            LEFT JOIN streets  st  ON st.id = p.street_id
+            LEFT JOIN member   m   ON m.id = mp.member_id
+            LEFT JOIN user     u   ON u.id = mp.uid
+            WHERE 1
+        ";
+
         $params = [];
         $types  = '';
 
-        if ($search !== '') {
-            $sql .= " AND (plotno LIKE ? OR msno LIKE ? OR status LIKE ?)";
-            $like = "%{$search}%";
-            $params[] = $like;
-            $params[] = $like;
-            $params[] = $like;
-            $types   .= "sss";
+        if (!empty($filters['search'])) {
+            $sql .= "
+                AND (
+                    mp.plotno      LIKE ? OR
+                    mp.msno        LIKE ? OR
+                    mp.status      LIKE ? OR
+                    m.name         LIKE ? OR
+                    pr.project_name LIKE ? OR
+                    sec.sector_name LIKE ? OR
+                    st.street       LIKE ?
+                )
+            ";
+            $search = '%' . $filters['search'] . '%';
+            // 7 placeholders
+            for ($i = 0; $i < 7; $i++) {
+                $params[] = $search;
+            }
+            $types .= str_repeat('s', 7);
         }
 
-        $sql .= " ORDER BY id DESC LIMIT ? OFFSET ?";
+        $sql .= " ORDER BY mp.id DESC LIMIT ? OFFSET ?";
+
         $params[] = $limit;
         $params[] = $offset;
-        $types   .= "ii";
+        $types    .= "ii";
 
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) {
             return false;
         }
 
-        if (!empty($params)) {
-            $stmt->bind_param($types, ...$params);
-        }
-
+        $stmt->bind_param($types, ...$params);
         $stmt->execute();
         return $stmt->get_result();
     }
 
-    public function getTotal($search = '')
+    /**
+     * Total rows for pagination
+     */
+    public function getTotal(array $filters): int
     {
-        $sql = "SELECT COUNT(*) AS total FROM {$this->table} WHERE 1";
+        $sql = "
+            SELECT COUNT(*) AS total
+            FROM {$this->table} mp
+            LEFT JOIN plots    p   ON p.id = mp.plot_id
+            LEFT JOIN projects pr  ON pr.id = p.project_id
+            LEFT JOIN sectors  sec ON sec.sector_id = p.sector_id
+            LEFT JOIN streets  st  ON st.id = p.street_id
+            LEFT JOIN member   m   ON m.id = mp.member_id
+            WHERE 1
+        ";
+
         $params = [];
         $types  = '';
 
-        if ($search !== '') {
-            $sql .= " AND (plotno LIKE ? OR msno LIKE ? OR status LIKE ?)";
-            $like = "%{$search}%";
-            $params[] = $like;
-            $params[] = $like;
-            $params[] = $like;
-            $types   .= "sss";
+        if (!empty($filters['search'])) {
+            $sql .= "
+                AND (
+                    mp.plotno      LIKE ? OR
+                    mp.msno        LIKE ? OR
+                    mp.status      LIKE ? OR
+                    m.name         LIKE ? OR
+                    pr.project_name LIKE ? OR
+                    sec.sector_name LIKE ? OR
+                    st.street       LIKE ?
+                )
+            ";
+            $search = '%' . $filters['search'] . '%';
+            for ($i = 0; $i < 7; $i++) {
+                $params[] = $search;
+            }
+            $types .= str_repeat('s', 7);
         }
 
         $stmt = $this->conn->prepare($sql);
@@ -72,105 +126,183 @@ class MemberPlot
         return (int)($res['total'] ?? 0);
     }
 
-    // Get a single record + plot linkage (project/sector/street for edit prefill)
-    public function getById($id)
+    /**
+     * Same as getAll but without LIMIT/OFFSET – used for export (CSV/Excel/PDF)
+     */
+    public function getAllForExport(array $filters)
     {
-        $sql = "SELECT mp.*, p.project_id, p.sector_id, p.street_id
-                FROM {$this->table} mp
-                LEFT JOIN plots p ON p.id = mp.plot_id
-                WHERE mp.id = ?
-                LIMIT 1";
+        $sql = "
+            SELECT 
+                mp.*,
+                p.plot_size,
+                pr.project_name,
+                sec.sector_name,
+                st.street AS street_name,
+                m.name AS member_name,
+                u.username AS assigned_user
+            FROM {$this->table} mp
+            LEFT JOIN plots    p   ON p.id = mp.plot_id
+            LEFT JOIN projects pr  ON pr.id = p.project_id
+            LEFT JOIN sectors  sec ON sec.sector_id = p.sector_id
+            LEFT JOIN streets  st  ON st.id = p.street_id
+            LEFT JOIN member   m   ON m.id = mp.member_id
+            LEFT JOIN user     u   ON u.id = mp.uid
+            WHERE 1
+        ";
+
+        $params = [];
+        $types  = '';
+
+        if (!empty($filters['search'])) {
+            $sql .= "
+                AND (
+                    mp.plotno      LIKE ? OR
+                    mp.msno        LIKE ? OR
+                    mp.status      LIKE ? OR
+                    m.name         LIKE ? OR
+                    pr.project_name LIKE ? OR
+                    sec.sector_name LIKE ? OR
+                    st.street       LIKE ?
+                )
+            ";
+            $search = '%' . $filters['search'] . '%';
+            for ($i = 0; $i < 7; $i++) {
+                $params[] = $search;
+            }
+            $types .= str_repeat('s', 7);
+        }
+
+        $sql .= " ORDER BY mp.id DESC";
 
         $stmt = $this->conn->prepare($sql);
-        if (!$stmt) return null;
+        if (!$stmt) {
+            return false;
+        }
 
-        $id = (int)$id;
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+
+    /**
+     * Get single record – joined with plots to get project/sector/street/size etc
+     */
+    public function getById(int $id): ?array
+    {
+        $sql = "
+            SELECT 
+                mp.*,
+                p.project_id,
+                p.sector_id,
+                p.street_id,
+                p.size_cat_id,
+                p.category_id
+            FROM {$this->table} mp
+            LEFT JOIN plots p ON p.id = mp.plot_id
+            WHERE mp.id = ?
+            LIMIT 1
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            return null;
+        }
         $stmt->bind_param("i", $id);
         $stmt->execute();
-        return $stmt->get_result()->fetch_assoc();
+        $res = $stmt->get_result()->fetch_assoc();
+        return $res ?: null;
     }
 
-    public function create(array $data)
+    /**
+     * Create new record
+     */
+    public function create(array $data): bool
     {
-        $sql = "INSERT INTO {$this->table}
+        $sql = "
+            INSERT INTO {$this->table}
             (plot_id, member_id, create_date, noi, insplan, status, plotno, msno, uid)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            VALUES (?,?,?,?,?,?,?,?,?)
+        ";
 
         $stmt = $this->conn->prepare($sql);
-        if (!$stmt) return false;
+        if (!$stmt) {
+            return false;
+        }
 
-        $plot_id     = (int)($data['plot_id'] ?? 0);
-        $member_id   = (int)($data['member_id'] ?? 0);
         $create_date = $data['create_date'] ?? date('Y-m-d H:i:s');
-        $noi         = (string)($data['noi'] ?? '');
-        $insplan     = (int)($data['insplan'] ?? 0);
-        $status      = (string)($data['status'] ?? 'Approved');
-        $plotno      = (string)($data['plotno'] ?? '');
-        $msno        = (string)($data['msno'] ?? '');
-        $uid         = (int)($data['uid'] ?? 0);
 
-        // i i s s i s s s i
         $stmt->bind_param(
             "iississsi",
-            $plot_id,
-            $member_id,
+            $data['plot_id'],
+            $data['member_id'],
             $create_date,
-            $noi,
-            $insplan,
-            $status,
-            $plotno,
-            $msno,
-            $uid
+            $data['noi'],
+            $data['insplan'],
+            $data['status'],
+            $data['plotno'],
+            $data['msno'],
+            $data['uid']
         );
 
         return $stmt->execute();
     }
 
-    public function update(array $data)
+    /**
+     * Update record
+     */
+    public function update(array $data): bool
     {
-        $sql = "UPDATE {$this->table}
-                SET plot_id = ?, member_id = ?, create_date = ?, noi = ?, insplan = ?,
-                    status = ?, plotno = ?, msno = ?, uid = ?
-                WHERE id = ?";
+        $sql = "
+            UPDATE {$this->table}
+            SET 
+                plot_id     = ?,
+                member_id   = ?,
+                create_date = ?,
+                noi         = ?,
+                insplan     = ?,
+                status      = ?,
+                plotno      = ?,
+                msno        = ?
+            WHERE id = ?
+            LIMIT 1
+        ";
 
         $stmt = $this->conn->prepare($sql);
-        if (!$stmt) return false;
+        if (!$stmt) {
+            return false;
+        }
 
-        $id          = (int)($data['id'] ?? 0);
-        $plot_id     = (int)($data['plot_id'] ?? 0);
-        $member_id   = (int)($data['member_id'] ?? 0);
         $create_date = $data['create_date'] ?? date('Y-m-d H:i:s');
-        $noi         = (string)($data['noi'] ?? '');
-        $insplan     = (int)($data['insplan'] ?? 0);
-        $status      = (string)($data['status'] ?? 'Approved');
-        $plotno      = (string)($data['plotno'] ?? '');
-        $msno        = (string)($data['msno'] ?? '');
-        $uid         = (int)($data['uid'] ?? 0);
 
-        // i i s s i s s s i i
         $stmt->bind_param(
-            "iississsii",
-            $plot_id,
-            $member_id,
+            "iississsi",
+            $data['plot_id'],
+            $data['member_id'],
             $create_date,
-            $noi,
-            $insplan,
-            $status,
-            $plotno,
-            $msno,
-            $uid,
-            $id
+            $data['noi'],
+            $data['insplan'],
+            $data['status'],
+            $data['plotno'],
+            $data['msno'],
+            $data['id']
         );
 
         return $stmt->execute();
     }
 
-    public function delete($id)
+    /**
+     * Delete record
+     */
+    public function delete(int $id): bool
     {
-        $stmt = $this->conn->prepare("DELETE FROM {$this->table} WHERE id = ?");
-        if (!$stmt) return false;
-
-        $id = (int)$id;
+        $sql = "DELETE FROM {$this->table} WHERE id = ? LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            return false;
+        }
         $stmt->bind_param("i", $id);
         return $stmt->execute();
     }

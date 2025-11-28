@@ -4,7 +4,11 @@ $id = $_GET['id'] ?? null;
 $pageTitle = $id ? "Edit Installment Plan" : "Add Installment Plan";
 $btnText   = $id ? "Update Plan" : "Add Plan";
 
-$db = new mysqli("localhost", "root", "", "rdlpk_db1");
+$db = new mysqli("localhost","root","","rdlpk_db1");
+if($db->connect_error){
+    echo json_encode(["success"=>false,"message"=>"DB connection failed"]);
+    exit;
+}
 if ($db->connect_error) {
     die("DB connection failed: " . $db->connect_error);
 }

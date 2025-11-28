@@ -7,7 +7,7 @@ include __DIR__ . '../../includes/config.php';
     <!--begin::Sidebar Menu-->
     <!-- client sidebar menu -->
     <ul
-      class="d-none  nav sidebar-menu flex-column"
+      class="nav sidebar-menu flex-column"
       data-lte-toggle="treeview"
       role="navigation"
       aria-label="Main navigation"
@@ -125,7 +125,7 @@ include __DIR__ . '../../includes/config.php';
 
     <!-- // Admin sidebar menu -->
     <ul
-      class="  nav sidebar-menu flex-column"
+      class="d-none  nav sidebar-menu flex-column"
       data-lte-toggle="treeview"
       role="navigation"
       aria-label="Main navigation"
