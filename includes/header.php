@@ -3,7 +3,7 @@
   <div class="container-fluid">
 
     <!-- LEFT SIDE -->
-    <a class="navbar-brand fw-bold" href="index.php">
+    <a class="navbar-brand fw-bold" href="/admin/index.php">
       🏠 Dashboard
     </a>
 
