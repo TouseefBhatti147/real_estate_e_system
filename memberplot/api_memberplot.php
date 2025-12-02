@@ -1,80 +1,163 @@
 <?php
-header('Content-Type: application/json');
-if (session_status() === PHP_SESSION_NONE) { session_start(); }
-
+session_start();
 require_once("../classes/MemberPlot.php");
 
-// DB
-$db = new mysqli("localhost","root","","rdlpk_db1");
-if($db->connect_error){
-    echo json_encode(['success'=>false,'message'=>'DB connection failed']);
+// DB Connect
+$db = new mysqli("localhost", "root", "", "rdlpk_db1");
+if ($db->connect_error) {
+    die("DB Connection Failed");
+}
+
+$mpObj = new MemberPlot($db);
+$action = $_POST['action'] ?? '';
+
+function esc($db, $v){
+    return $db->real_escape_string(trim($v ?? ''));
+}
+
+/* ============================================================
+   DELETE
+============================================================ */
+if ($action == "delete") {
+    $id = intval($_POST['id'] ?? 0);
+    if ($id > 0) {
+        $mpObj->delete($id);
+    }
+    header("Location: memberplot_list.php");
     exit;
 }
 
-$mpObj  = new MemberPlot($db);
-$action = $_POST['action'] ?? $_GET['action'] ?? '';
+/* ============================================================
+   ADD / UPDATE
+============================================================ */
 
-if ($action === 'add' || $action === 'update') {
+if ($action == "add" || $action == "update") {
 
-    $id         = isset($_POST['id']) ? (int)$_POST['id'] : 0;
-    $plot_id    = (int)($_POST['plot_id'] ?? 0);
-    $member_id  = (int)($_POST['member_id'] ?? 0);
-    $createDate = $_POST['create_date'] ?? '';
-    $noi        = $_POST['noi'] ?? '1';
-    $insplan    = (int)($_POST['insplan'] ?? 0);
-    $msno       = $_POST['msno'] ?? '';
-    $uid        = isset($_POST['uid']) ? (int)$_POST['uid'] : (int)($_SESSION['user_id'] ?? 0);
+    $id         = intval($_POST['id'] ?? 0);
+    $plot_id    = intval($_POST['plot_id'] ?? 0);
+    $member_id  = intval($_POST['member_id'] ?? 0);
+    $createDate = esc($db, $_POST['create_date'] ?? '');
+    $noi        = intval($_POST['noi'] ?? 0);
+    $insplan    = intval($_POST['insplan'] ?? 0);
+    $uid        = intval($_POST['uid'] ?? 0);
 
-    if ($plot_id <= 0 || $member_id <= 0) {
-        echo json_encode(['success'=>false,'message'=>'Please select plot and member']);
-        exit;
+    if ($plot_id <= 0) die("Select Plot");
+    if ($member_id <= 0) die("Select Member");
+    if ($insplan <= 0) die("Select Installment Plan");
+
+    /* Fetch Plot Details */
+    $sqlPlot = "
+        SELECT 
+            p.*, 
+            proj.code AS project_code,
+            sc.code AS size_code
+        FROM plots p
+        LEFT JOIN projects proj ON proj.id = p.project_id
+        LEFT JOIN size_cat sc ON sc.id = p.size_cat_id
+        WHERE p.id = $plot_id LIMIT 1
+    ";
+
+    $plotRes = $db->query($sqlPlot);
+    if (!$plotRes) die("Plot Query Error: ".$db->error);
+
+    $plot = $plotRes->fetch_assoc();
+    if (!$plot) die("Plot Not Found");
+
+    /* Plot Already Allotted? */
+    if ($plot['status'] == "Allotted") {
+        die("This plot is already allotted.");
     }
 
-    $data = [
-        'id'          => $id,
-        'plot_id'     => $plot_id,
-        'member_id'   => $member_id,
-        'create_date' => $createDate,
-        'noi'         => $noi,
-        'insplan'     => $insplan,
-        'status'      => 'Approved',
-        'plotno'      => '',     // keep blank for now
-        'msno'        => $msno,
-        'uid'         => $uid
-    ];
+    /* Auto Membership Number */
+    $generatedPlotNo = $plot['project_code'] . "-" . $plot['plot_detail_address'] . "-" . $plot['size_code'];
 
-    if ($action === 'add') {
-        $ok = $mpObj->add($data);
-        echo json_encode([
-            'success' => $ok,
-            'message' => $ok ? 'Assignment saved successfully' : 'Failed to save assignment'
-        ]);
-    } else {
-        if ($id <= 0) {
-            echo json_encode(['success'=>false,'message'=>'Missing ID for update']);
-            exit;
+    /* ============================================================
+       ADD RECORD
+    ============================================================= */
+    if ($action == "add") {
+
+        $sql = "INSERT INTO memberplot
+            (plot_id, member_id, create_date, noi, insplan, status, plotno, msno, uid)
+            VALUES (?,?,?,?,?,'Allotted',?,?,?)";
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->bind_param(
+            "iisiissi",
+            $plot_id,
+            $member_id,
+            $createDate,
+            $noi,
+            $insplan,
+            $generatedPlotNo,
+            $generatedPlotNo,
+            $uid
+        );
+
+        if (!$stmt->execute()) {
+            die("DB Error: ".$stmt->error);
         }
-        $ok = $mpObj->update($data);
-        echo json_encode([
-            'success' => $ok,
-            'message' => $ok ? 'Assignment updated successfully' : 'Failed to update assignment'
-        ]);
-    }
-    exit;
-}
 
-if ($action === 'delete') {
-    $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
-    if ($id <= 0) {
-        echo json_encode(['success'=>false,'message'=>'Invalid ID']);
+        $insert_id = $stmt->insert_id;
+
+        /* Update Plot Status */
+        $db->query("UPDATE plots SET status='Allotted' WHERE id=$plot_id");
+
+        /* Generate Installment Schedule */
+        $planRes = $db->query("SELECT * FROM installment_plan WHERE id=$insplan");
+        $plan = $planRes->fetch_assoc();
+
+        if ($plan) {
+            $due_date = date('Y-m-d', strtotime($createDate));
+            $total = intval($plan['tno']);
+
+            for ($i = 1; $i <= $total; $i++) {
+
+                $label = $plan['lab'.$i] ?? '';
+                $amount = $plan[(string)$i] ?? '';
+
+                $sqlPay = "
+                    INSERT INTO installpayment
+                    (plot_id, mem_id, lab, dueamount, due_date_temp)
+                    VALUES (?,?,?,?,?)
+                ";
+
+                $stmt2 = $db->prepare($sqlPay);
+                $stmt2->bind_param("iisss", $plot_id, $member_id, $label, $amount, $due_date);
+                $stmt2->execute();
+
+                $due_date = date('Y-m-d', strtotime("$due_date +$noi months"));
+            }
+        }
+
+        /* Final Redirect */
+        header("Location: memberplot_list.php");
         exit;
     }
-    $ok = $mpObj->delete($id);
-    echo json_encode([
-        'success' => $ok,
-        'message' => $ok ? 'Assignment deleted' : 'Delete failed'
-    ]);
-    exit;
+
+    /* ============================================================
+       UPDATE RECORD
+    ============================================================= */
+    if ($action == "update") {
+
+        $data = [
+            "id"        => $id,
+            "plot_id"   => $plot_id,
+            "member_id" => $member_id,
+            "create_date" => $createDate,
+            "noi"       => $noi,
+            "insplan"   => $insplan,
+            "status"    => "Allotted",
+            "plotno"    => $generatedPlotNo,
+            "msno"      => $generatedPlotNo
+        ];
+
+        $mpObj->update($data);
+
+        header("Location: memberplot_list.php");
+        exit;
+    }
 }
 
-echo json_encode(['success'=>false,'message'=>'Invalid action']);
+die("Invalid Action");
+?>

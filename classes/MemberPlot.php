@@ -1,244 +1,126 @@
 <?php
-class MemberPlot
-{
-    /** @var mysqli */
-    private $conn;
-    private $table = "memberplot";
+class MemberPlot {
 
-    public function __construct(mysqli $db)
-    {
-        $this->conn = $db;
+    private $db;
+    private $debug = true; // SHOW SQL ERRORS
+
+    public function __construct($db){
+        $this->db = $db;
     }
 
-    /**
-     * Get list with joins (projects, sectors, streets, plots, member, user)
-     * $filters = ['search' => '...']
-     */
-    public function getAll(array $filters, int $limit, int $offset)
-    {
+    // -------------------------------------------------------------
+    // GET ALL with Filters (search + pagination)
+    // -------------------------------------------------------------
+    public function getAll($filters = [], $limit = 20, $offset = 0){
+
+        $search = $filters['search'] ?? '';
+        $search = $this->db->real_escape_string($search);
+
         $sql = "
             SELECT 
                 mp.*,
-                p.plot_size,
-                pr.project_name,
-                sec.sector_name,
-                st.street AS street_name,
                 m.name AS member_name,
-                u.username AS assigned_user
-            FROM {$this->table} mp
-            LEFT JOIN plots    p   ON p.id = mp.plot_id
-            LEFT JOIN projects pr  ON pr.id = p.project_id
-            LEFT JOIN sectors  sec ON sec.sector_id = p.sector_id
-            LEFT JOIN streets  st  ON st.id = p.street_id
-            LEFT JOIN member   m   ON m.id = mp.member_id
-            LEFT JOIN user     u   ON u.id = mp.uid
+                p.plot_size,
+                p.plot_detail_address,
+                proj.project_name,
+                sec.sector_name,
+                st.street AS street_name
+            FROM memberplot mp
+            LEFT JOIN member m ON m.id = mp.member_id
+            LEFT JOIN plots p ON p.id = mp.plot_id
+            LEFT JOIN projects proj ON proj.id = p.project_id
+            LEFT JOIN sectors sec ON sec.sector_id = p.sector_id
+            LEFT JOIN streets st ON st.id = p.street_id
             WHERE 1
         ";
 
-        $params = [];
-        $types  = '';
-
-        if (!empty($filters['search'])) {
+        if($search !== ""){
             $sql .= "
                 AND (
-                    mp.plotno      LIKE ? OR
-                    mp.msno        LIKE ? OR
-                    mp.status      LIKE ? OR
-                    m.name         LIKE ? OR
-                    pr.project_name LIKE ? OR
-                    sec.sector_name LIKE ? OR
-                    st.street       LIKE ?
-                )
+                        m.name LIKE '%$search%'
+                        OR mp.status LIKE '%$search%'
+                        OR mp.plotno LIKE '%$search%'
+                    )
             ";
-            $search = '%' . $filters['search'] . '%';
-            // 7 placeholders
-            for ($i = 0; $i < 7; $i++) {
-                $params[] = $search;
-            }
-            $types .= str_repeat('s', 7);
         }
 
-        $sql .= " ORDER BY mp.id DESC LIMIT ? OFFSET ?";
+        $sql .= " ORDER BY mp.id DESC LIMIT $limit OFFSET $offset";
 
-        $params[] = $limit;
-        $params[] = $offset;
-        $types    .= "ii";
+        $result = $this->db->query($sql);
 
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) {
+        if(!$result){
+            if ($this->debug) {
+                die("SQL ERROR: " . $this->db->error . "<br><br>Query: $sql");
+            }
             return false;
         }
 
-        $stmt->bind_param($types, ...$params);
-        $stmt->execute();
-        return $stmt->get_result();
+        return $result;
     }
 
-    /**
-     * Total rows for pagination
-     */
-    public function getTotal(array $filters): int
-    {
+    // -------------------------------------------------------------
+    // Total Count (same filters as getAll)
+    // -------------------------------------------------------------
+    public function getTotal($filters = []){
+
+        $search = $filters['search'] ?? '';
+        $search = $this->db->real_escape_string($search);
+
         $sql = "
-            SELECT COUNT(*) AS total
-            FROM {$this->table} mp
-            LEFT JOIN plots    p   ON p.id = mp.plot_id
-            LEFT JOIN projects pr  ON pr.id = p.project_id
-            LEFT JOIN sectors  sec ON sec.sector_id = p.sector_id
-            LEFT JOIN streets  st  ON st.id = p.street_id
-            LEFT JOIN member   m   ON m.id = mp.member_id
+            SELECT COUNT(*) AS cnt
+            FROM memberplot mp
+            LEFT JOIN member m ON m.id = mp.member_id
             WHERE 1
         ";
 
-        $params = [];
-        $types  = '';
-
-        if (!empty($filters['search'])) {
+        if($search !== ""){
             $sql .= "
                 AND (
-                    mp.plotno      LIKE ? OR
-                    mp.msno        LIKE ? OR
-                    mp.status      LIKE ? OR
-                    m.name         LIKE ? OR
-                    pr.project_name LIKE ? OR
-                    sec.sector_name LIKE ? OR
-                    st.street       LIKE ?
-                )
+                        m.name LIKE '%$search%'
+                        OR mp.status LIKE '%$search%'
+                        OR mp.plotno LIKE '%$search%'
+                    )
             ";
-            $search = '%' . $filters['search'] . '%';
-            for ($i = 0; $i < 7; $i++) {
-                $params[] = $search;
-            }
-            $types .= str_repeat('s', 7);
         }
 
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) {
+        $result = $this->db->query($sql);
+
+        if(!$result){
+            if ($this->debug) {
+                die("COUNT ERROR: " . $this->db->error . "<br><br>Query: $sql");
+            }
             return 0;
         }
 
-        if (!empty($params)) {
-            $stmt->bind_param($types, ...$params);
-        }
-
-        $stmt->execute();
-        $res = $stmt->get_result()->fetch_assoc();
-        return (int)($res['total'] ?? 0);
+        $row = $result->fetch_assoc();
+        return $row['cnt'] ?? 0;
     }
 
-    /**
-     * Same as getAll but without LIMIT/OFFSET – used for export (CSV/Excel/PDF)
-     */
-    public function getAllForExport(array $filters)
-    {
-        $sql = "
-            SELECT 
-                mp.*,
-                p.plot_size,
-                pr.project_name,
-                sec.sector_name,
-                st.street AS street_name,
-                m.name AS member_name,
-                u.username AS assigned_user
-            FROM {$this->table} mp
-            LEFT JOIN plots    p   ON p.id = mp.plot_id
-            LEFT JOIN projects pr  ON pr.id = p.project_id
-            LEFT JOIN sectors  sec ON sec.sector_id = p.sector_id
-            LEFT JOIN streets  st  ON st.id = p.street_id
-            LEFT JOIN member   m   ON m.id = mp.member_id
-            LEFT JOIN user     u   ON u.id = mp.uid
-            WHERE 1
-        ";
-
-        $params = [];
-        $types  = '';
-
-        if (!empty($filters['search'])) {
-            $sql .= "
-                AND (
-                    mp.plotno      LIKE ? OR
-                    mp.msno        LIKE ? OR
-                    mp.status      LIKE ? OR
-                    m.name         LIKE ? OR
-                    pr.project_name LIKE ? OR
-                    sec.sector_name LIKE ? OR
-                    st.street       LIKE ?
-                )
-            ";
-            $search = '%' . $filters['search'] . '%';
-            for ($i = 0; $i < 7; $i++) {
-                $params[] = $search;
-            }
-            $types .= str_repeat('s', 7);
-        }
-
-        $sql .= " ORDER BY mp.id DESC";
-
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) {
-            return false;
-        }
-
-        if (!empty($params)) {
-            $stmt->bind_param($types, ...$params);
-        }
-
-        $stmt->execute();
-        return $stmt->get_result();
+    // -------------------------------------------------------------
+    // GET by ID
+    // -------------------------------------------------------------
+    public function getById($id){
+        $id = (int)$id;
+        $sql = "SELECT * FROM memberplot WHERE id=$id LIMIT 1";
+        return $this->db->query($sql)->fetch_assoc();
     }
 
-    /**
-     * Get single record – joined with plots to get project/sector/street/size etc
-     */
-    public function getById(int $id): ?array
-    {
+    // -------------------------------------------------------------
+    // ADD
+    // -------------------------------------------------------------
+    public function add($data){
         $sql = "
-            SELECT 
-                mp.*,
-                p.project_id,
-                p.sector_id,
-                p.street_id,
-                p.size_cat_id,
-                p.category_id
-            FROM {$this->table} mp
-            LEFT JOIN plots p ON p.id = mp.plot_id
-            WHERE mp.id = ?
-            LIMIT 1
-        ";
-
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) {
-            return null;
-        }
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $res = $stmt->get_result()->fetch_assoc();
-        return $res ?: null;
-    }
-
-    /**
-     * Create new record
-     */
-    public function create(array $data): bool
-    {
-        $sql = "
-            INSERT INTO {$this->table}
+            INSERT INTO memberplot 
             (plot_id, member_id, create_date, noi, insplan, status, plotno, msno, uid)
             VALUES (?,?,?,?,?,?,?,?,?)
         ";
 
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) {
-            return false;
-        }
-
-        $create_date = $data['create_date'] ?? date('Y-m-d H:i:s');
-
+        $stmt = $this->db->prepare($sql);
         $stmt->bind_param(
             "iississsi",
             $data['plot_id'],
             $data['member_id'],
-            $create_date,
+            $data['create_date'],
             $data['noi'],
             $data['insplan'],
             $data['status'],
@@ -250,38 +132,29 @@ class MemberPlot
         return $stmt->execute();
     }
 
-    /**
-     * Update record
-     */
-    public function update(array $data): bool
-    {
+    // -------------------------------------------------------------
+    // UPDATE
+    // -------------------------------------------------------------
+    public function update($data){
         $sql = "
-            UPDATE {$this->table}
-            SET 
-                plot_id     = ?,
-                member_id   = ?,
-                create_date = ?,
-                noi         = ?,
-                insplan     = ?,
-                status      = ?,
-                plotno      = ?,
-                msno        = ?
-            WHERE id = ?
-            LIMIT 1
+            UPDATE memberplot SET 
+                plot_id=?, 
+                member_id=?, 
+                create_date=?, 
+                noi=?, 
+                insplan=?,
+                status=?, 
+                plotno=?, 
+                msno=?
+            WHERE id=?
         ";
 
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) {
-            return false;
-        }
-
-        $create_date = $data['create_date'] ?? date('Y-m-d H:i:s');
-
+        $stmt = $this->db->prepare($sql);
         $stmt->bind_param(
             "iississsi",
             $data['plot_id'],
             $data['member_id'],
-            $create_date,
+            $data['create_date'],
             $data['noi'],
             $data['insplan'],
             $data['status'],
@@ -293,17 +166,11 @@ class MemberPlot
         return $stmt->execute();
     }
 
-    /**
-     * Delete record
-     */
-    public function delete(int $id): bool
-    {
-        $sql = "DELETE FROM {$this->table} WHERE id = ? LIMIT 1";
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) {
-            return false;
-        }
-        $stmt->bind_param("i", $id);
-        return $stmt->execute();
+    // -------------------------------------------------------------
+    // DELETE
+    // -------------------------------------------------------------
+    public function delete($id){
+        $id = (int)$id;
+        return $this->db->query("DELETE FROM memberplot WHERE id=$id");
     }
 }

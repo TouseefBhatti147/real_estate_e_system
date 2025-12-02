@@ -124,11 +124,9 @@ $exportQuery = http_build_query(['q' => $search]);
                                         <th>Plot Size</th>
                                         <th>Member</th>
                                         <th>MS No</th>
-                                        <th>NOI</th>
-                                        <th>Ins Plan</th>
+                                        
                                         <th>Status</th>
-                                        <th>Assigned By</th>
-                                        <th>Create Date</th>
+                                       
                                         <th width="130">Actions</th>
                                     </tr>
                                 </thead>
@@ -145,8 +143,7 @@ $exportQuery = http_build_query(['q' => $search]);
 
                                             <td><?= htmlspecialchars($row['member_name'] ?? $row['member_id']) ?></td>
                                             <td><?= htmlspecialchars($row['msno']) ?></td>
-                                            <td><?= htmlspecialchars($row['noi']) ?></td>
-                                            <td><?= htmlspecialchars($row['insplan']) ?></td>
+                                           
 
                                             <td>
                                                 <?php
@@ -161,26 +158,28 @@ $exportQuery = http_build_query(['q' => $search]);
                                                 </span>
                                             </td>
 
-                                            <td><?= htmlspecialchars($row['assigned_user'] ?? $row['uid']) ?></td>
+                                        
 
-                                            <td>
-                                                <?php
-                                                if (!empty($row['create_date'])) {
-                                                    echo htmlspecialchars(date("d-m-Y H:i", strtotime($row['create_date'])));
-                                                }
-                                                ?>
-                                            </td>
+                                           <td>
+    <!-- Edit -->
+    <a href="form_memberplot.php?id=<?= $row['id'] ?>"
+       class="btn btn-warning btn-sm me-1">
+        <i class="bi bi-pencil"></i>
+    </a>
 
-                                            <td>
-                                                <a href="form_memberplot.php?id=<?= $row['id'] ?>"
-                                                   class="btn btn-warning btn-sm me-1">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                <button class="btn btn-danger btn-sm"
-                                                        onclick="deleteMemberPlot(<?= $row['id'] ?>)">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </td>
+    <!-- Delete -->
+    <button class="btn btn-danger btn-sm me-1"
+            onclick="deleteMemberPlot(<?= $row['id'] ?>)">
+        <i class="bi bi-trash"></i>
+    </button>
+
+    <!-- View Installments -->
+    <a href="view_installment.php?plot_id=<?= $row['plot_id'] ?>&member_id=<?= $row['member_id'] ?>"
+       class="btn btn-info btn-sm">
+        <i class="bi bi-list-ul"></i>
+    </a>
+</td>
+
                                         </tr>
                                     <?php endwhile; ?>
                                 <?php else: ?>
