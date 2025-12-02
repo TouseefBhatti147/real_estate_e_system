@@ -178,7 +178,7 @@ $propTypes = $db->query("SELECT property_type_id, title FROM property_types ORDE
 
                             <div class="col-md-3">
                                 <label class="form-label">Status</label>
-                                <input type="text" name="status"  class="form-control" required
+                                <input type="text" name="status" class="form-control" required
                                        value="<?= htmlspecialchars($record['status'] ?? '') ?>">
                             </div>
 
