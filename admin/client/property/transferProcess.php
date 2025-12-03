@@ -1,27 +1,28 @@
-<?php session_start(); ?>
+<?php session_start();
+?>
+
 <!doctype html>
 <html lang="en">
 
 <head>
     <title>Real Estate E-system</title>
     <meta name="description" content="Admin Dashboard..." />
-    <?php include("../../admin/includes/headerLinks.php"); ?>
+    <?php include("../../includes/headerLinks.php"); ?>
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
-
         <!-- Header -->
-        <?php require("../../admin/includes/header.php"); ?>
+        <?php require("../../includes/header.php"); ?>
 
-        <!-- Sidebar -->
-        <aside class="app-sidebar bg-light-subtle shadow" data-bs-theme="light">
+        <!-- Sidebar  client = bg-light-subtle, data-bs-theme= light , dark = bg-body-secondary , data-bs-theme= dark -->
+        <aside class="app-sidebar  bg-light-subtle shadow" data-bs-theme="light">
             <div class="sidebar-brand">
                 <a href="index.php" class="brand-link">
                     <span class="brand-text fw-light">Real Estate E-System</span>
                 </a>
             </div>
-            <?php include("../../admin/includes/sidebar.php"); ?>
+            <?php include("../../includes/sidebar.php"); ?>
         </aside>
 
         <!-- Main Content -->
@@ -48,9 +49,12 @@
             <!--begin::App Content-->
             <div class="app-content">
                 <div class="container-fluid">
+
                     <div class="col-md-12">
+
                         <div class="card mb-6">
 
+                            <!-- /.card-header -->
                             <div class="card-body p-0">
                                 <table class="table table-striped">
                                     <thead>
@@ -89,20 +93,22 @@
                                     <li class="page-item"><a class="page-link" href="#">»</a></li>
                                 </ul>
                             </div>
-
                         </div>
+
                     </div>
+
                 </div>
             </div>
             <!--end::App Content-->
 
         </main>
 
+
         <!-- Footer -->
-        <?php include("../../admin/includes/footer.php"); ?>
+        <?php include("../../includes/footer.php"); ?>
     </div>
 
-    <?php include("../../admin/includes/scripts.php"); ?>
+    <?php include("../../includes/scripts.php"); ?>
 
 </body>
 

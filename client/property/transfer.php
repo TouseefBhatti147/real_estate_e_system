@@ -1,34 +1,32 @@
-<?php session_start();
-?>
-
+<?php session_start(); ?>
 <!doctype html>
 <html lang="en">
 
 <head>
     <title>Real Estate E-system</title>
     <meta name="description" content="Admin Dashboard..." />
-    <?php include("../../includes/headerLinks.php"); ?>
+    <?php include("../../admin/includes/headerLinks.php"); ?>
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
+        
         <!-- Header -->
-        <?php require("../../includes/header.php"); ?>
+        <?php require("../../admin/includes/header.php"); ?>
 
-        <!-- Sidebar  client = bg-light-subtle, data-bs-theme= light , dark = bg-body-secondary , data-bs-theme= dark -->
-        <aside class="app-sidebar  bg-light-subtle shadow" data-bs-theme="light">
+        <!-- Sidebar -->
+        <aside class="app-sidebar bg-light-subtle shadow" data-bs-theme="light">
             <div class="sidebar-brand">
                 <a href="index.php" class="brand-link">
                     <span class="brand-text fw-light">Real Estate E-System</span>
                 </a>
             </div>
-            <?php include("../../includes/sidebar.php"); ?>
+            <?php include("../../admin/includes/sidebar.php"); ?>
         </aside>
 
         <!-- Main Content -->
         <main class="app-main">
 
-            <!--begin::App Content Header-->
             <div class="app-content-header">
                 <div class="container-fluid">
                     <div class="row">
@@ -38,23 +36,18 @@
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-end">
                                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Property</li>
+                                <li class="breadcrumb-item active">Property</li>
                             </ol>
                         </div>
                     </div>
                 </div>
             </div>
-            <!--end::App Content Header-->
 
-            <!--begin::App Content-->
             <div class="app-content">
                 <div class="container-fluid">
-
                     <div class="col-md-12">
-
                         <div class="card mb-6">
 
-                            <!-- /.card-header -->
                             <div class="card-body p-0">
                                 <table class="table table-striped">
                                     <thead>
@@ -82,7 +75,6 @@
                                         </tr>
                                     </tbody>
                                 </table>
-
                             </div>
 
                             <div class="card-footer clearfix">
@@ -94,23 +86,19 @@
                                     <li class="page-item"><a class="page-link" href="#">»</a></li>
                                 </ul>
                             </div>
+
                         </div>
-
                     </div>
-
                 </div>
             </div>
-            <!--end::App Content-->
 
         </main>
 
-
         <!-- Footer -->
-        <?php include("../../includes/footer.php"); ?>
+        <?php include("../../admin/includes/footer.php"); ?>
     </div>
 
-    <?php include("../../includes/scripts.php"); ?>
+    <?php include("../../admin/includes/scripts.php"); ?>
 
 </body>
-
 </html>

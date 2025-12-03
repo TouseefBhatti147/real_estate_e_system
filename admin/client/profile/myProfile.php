@@ -1,32 +1,34 @@
-<?php session_start(); ?>
+<?php session_start();
+?>
+
 <!doctype html>
 <html lang="en">
 
 <head>
     <title>Real Estate E-system</title>
     <meta name="description" content="Admin Dashboard..." />
-    <?php include("../../admin/includes/headerLinks.php"); ?>
+    <?php include("../../includes/headerLinks.php"); ?>
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
-
         <!-- Header -->
-        <?php require("../../admin/includes/header.php"); ?>
+        <?php require("../../includes/header.php"); ?>
 
-        <!-- Sidebar -->
-        <aside class="app-sidebar bg-light-subtle shadow" data-bs-theme="light">
+        <!-- Sidebar  client = bg-light-subtle, data-bs-theme= light , dark = bg-body-secondary , data-bs-theme= dark -->
+        <aside class="app-sidebar  bg-light-subtle shadow" data-bs-theme="light">
             <div class="sidebar-brand">
                 <a href="index.php" class="brand-link">
                     <span class="brand-text fw-light">Real Estate E-System</span>
                 </a>
             </div>
-            <?php include("../../admin/includes/sidebar.php"); ?>
+            <?php include("../../includes/sidebar.php"); ?>
         </aside>
 
         <!-- Main Content -->
         <main class="app-main">
 
+            <!--begin::App Content Header-->
             <div class="app-content-header">
                 <div class="container-fluid">
                     <div class="row">
@@ -42,27 +44,30 @@
                     </div>
                 </div>
             </div>
+            <!--end::App Content Header-->
 
+            <!--begin::App Content-->
             <div class="app-content">
                 <div class="container-fluid">
 
                     <div class="col-md-12">
-                        <div class="row">
 
-                            <!-- Left Side -->
+                        <div class="row">
+                            <!-- Left Side (Image + Name) -->
                             <div class="col-md-3 text-center">
-                                <div class="card p-3">
-                                    <img src="../../assets/img/avatar2.png" class="ms-auto me-auto img-thumbnail" style="width:100%; max-width:220px;">
+                                <div class="card p-3 ">
+                                    <img src="../../assets//img//avatar2.png" class="ms-auto me-auto mt-0 mb-0 img-thumbnail" style="width:100%; max-width:220px;">
                                     <h5 class="mt-3 p-2" style="background:#1d79a7; color:white; border-radius:4px;">
                                         Ghulam Hussain
                                     </h5>
                                 </div>
                             </div>
 
-                            <!-- Right Side -->
+                            <!-- Right Side (Information Table) -->
                             <div class="col-md-9">
                                 <table class="table table-bordered">
 
+                                    <!-- Section: Personal Info -->
                                     <tr style="background:#1d79a7; color:white;">
                                         <th colspan="2">Personal Information</th>
                                     </tr>
@@ -75,6 +80,7 @@
                                         <td><span style="color:green;">s/o:</span> Mohammad Pehlwan</td>
                                     </tr>
 
+                                    <!-- Section: Location -->
                                     <tr style="background:#1d79a7; color:white;">
                                         <th colspan="2">Location</th>
                                     </tr>
@@ -87,6 +93,7 @@
                                         <td>Pakistan, Multan, Rawalpindi</td>
                                     </tr>
 
+                                    <!-- Section: Contact Info -->
                                     <tr style="background:#1d79a7; color:white;">
                                         <th colspan="2">Contact Information</th>
                                     </tr>
@@ -103,6 +110,7 @@
                                         <td>0304-2070252</td>
                                     </tr>
 
+                                    <!-- Section: Activity -->
                                     <tr style="background:#1d79a7; color:white;">
                                         <th colspan="2">Activity</th>
                                     </tr>
@@ -114,18 +122,23 @@
                                 </table>
                             </div>
                         </div>
+
+
                     </div>
 
                 </div>
             </div>
+            <!--end::App Content-->
 
         </main>
 
+
         <!-- Footer -->
-        <?php include("../../admin/includes/footer.php"); ?>
+        <?php include("../../includes/footer.php"); ?>
     </div>
 
-    <?php include("../../admin/includes/scripts.php"); ?>
+    <?php include("../../includes/scripts.php"); ?>
 
 </body>
+
 </html>

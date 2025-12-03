@@ -1,27 +1,28 @@
-<?php session_start(); ?>
+<?php session_start();
+?>
+
 <!doctype html>
 <html lang="en">
 
 <head>
     <title>Real Estate E-system</title>
     <meta name="description" content="Admin Dashboard..." />
-    <?php include("../../admin/includes/headerLinks.php"); ?>
+    <?php include("../../includes/headerLinks.php"); ?>
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
-
         <!-- Header -->
-        <?php require("../../admin/includes/header.php"); ?>
+        <?php require("../../includes/header.php"); ?>
 
-        <!-- Sidebar -->
-        <aside class="app-sidebar bg-light-subtle shadow" data-bs-theme="light">
+        <!-- Sidebar  client = bg-light-subtle, data-bs-theme= light , dark = bg-body-secondary , data-bs-theme= dark -->
+        <aside class="app-sidebar  bg-light-subtle shadow" data-bs-theme="light">
             <div class="sidebar-brand">
                 <a href="index.php" class="brand-link">
                     <span class="brand-text fw-light">Real Estate E-System</span>
                 </a>
             </div>
-            <?php include("../../admin/includes/sidebar.php"); ?>
+            <?php include("../../includes/sidebar.php"); ?>
         </aside>
 
         <!-- Main Content -->
@@ -32,12 +33,12 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h3 class="mb-0">Property</h3>
+                            <h3 class="mb-0">Accounts</h3>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-end">
                                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Property</li>
+                                <li class="breadcrumb-item active" aria-current="page">Accounts</li>
                             </ol>
                         </div>
                     </div>
@@ -48,36 +49,40 @@
             <!--begin::App Content-->
             <div class="app-content">
                 <div class="container-fluid">
+
                     <div class="col-md-12">
+
                         <div class="card mb-6">
 
+                            <!-- /.card-header -->
                             <div class="card-body p-0">
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th style="width: 10px">Sr#</th>
+                                            <th>Sr No</th>
+                                            <th>Property Type</th>
+                                            <th>Size</th>
+                                            <th>Total Price</th>
+                                            <th>Total Amount Paid</th>
+                                            <th>Payable Amount</th>
                                             <th>Project Name</th>
-                                            <th>Type</th>
-                                            <th>Membership No.</th>
-                                            <th>Form No</th>
-                                            <th>Block Name</th>
-                                            <th>Nominee Name</th>
-                                            <th>Booking Name</th>
+                                            <th>App/Ms No Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr class="align-middle">
+                                        <tr>
                                             <td>1</td>
-                                            <td>Update software</td>
-                                            <td>ad</td>
-                                            <td>12345</td>
-                                            <td>F-001</td>
-                                            <td>A Block</td>
-                                            <td>John Doe</td>
-                                            <td>Arif Hussain</td>
+                                            <td>Residential</td>
+                                            <td>10 Marla</td>
+                                            <td>5,000,000</td>
+                                            <td>2,500,000</td>
+                                            <td>2,500,000</td>
+                                            <td>Green Valley</td>
+                                            <td>MS-1234</td>
                                         </tr>
                                     </tbody>
                                 </table>
+
                             </div>
 
                             <div class="card-footer clearfix">
@@ -89,20 +94,22 @@
                                     <li class="page-item"><a class="page-link" href="#">»</a></li>
                                 </ul>
                             </div>
-
                         </div>
+
                     </div>
+
                 </div>
             </div>
             <!--end::App Content-->
 
         </main>
 
+
         <!-- Footer -->
-        <?php include("../../admin/includes/footer.php"); ?>
+        <?php include("../../includes/footer.php"); ?>
     </div>
 
-    <?php include("../../admin/includes/scripts.php"); ?>
+    <?php include("../../includes/scripts.php"); ?>
 
 </body>
 
