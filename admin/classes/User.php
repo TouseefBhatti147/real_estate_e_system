@@ -12,15 +12,17 @@ class User
     // ---------------- LOGIN ----------------
     public function login($username, $password)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE username = ? LIMIT 1";
+         $sql = "SELECT * FROM {$this->table} WHERE username = ? LIMIT 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$username]);
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user && password_verify($password, $user['password'])) {
-            return $user;
-        }
+       // Accept plain text AND hashed passwords
+if ($user && ($password === $user['password'] || password_verify($password, $user['password']))) {
+    return $user;
+}
+
 
         return false;
     }

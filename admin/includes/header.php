@@ -1,3 +1,8 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!-- ======== TOP NAVIGATION BAR (Elegant Menu) ======== -->
 <nav class="navbar navbar-expand-lg bg-white shadow-sm border-bottom" style="font-size: 15px;">
   <div class="container-fluid">
@@ -14,45 +19,38 @@
 
     <!-- MENU ITEMS -->
     <div class="collapse navbar-collapse" id="topNavbar">
-      <ul class="navbar-nav">
+      <ul class="navbar-nav me-auto">
 
         <!-- PROPERTY MANAGEMENT -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
             Property Management
           </a>
-   <ul class="dropdown-menu shadow">
-
-    <li><a class="dropdown-item" href="/real_estate_esystem/admin/plots/plots_list.php">All Plots</a></li>
-    <li><a class="dropdown-item" href="/real_estate_esystem/admin/plots/form_plot.php">Add Plot</a></li>
-    <li><a class="dropdown-item" href="/real_estate_esystem/admin/memberplot/memberplot_list.php">Assign/Allot Plots</a></li>
-    <li><a class="dropdown-item" href="/real_estate_esystem/admin/transfer/transfer_list.php">Transfer Plots</a></li>
-
-</ul>
-
+          <ul class="dropdown-menu shadow">
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/plots/plots_list.php">All Plots</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/plots/form_plot.php">Add Plot</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/memberplot/memberplot_list.php">Assign/Allot Plots</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/transfer/transfer_list.php">Transfer Plots</a></li>
+          </ul>
         </li>
 
-        <!-- PROJECT MANAGEMENT -->
+        <!-- PROJECTS -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
             Projects
           </a>
-         <ul class="dropdown-menu shadow">
+          <ul class="dropdown-menu shadow">
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/plots/plots_list.php">All Plots</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/plots/form_plot.php">Add Plots</a></li>
 
-   <li><a class="dropdown-item" href="/real_estate_esystem/admin/plots/plots_list.php">All Plots</a></li>
-<li><a class="dropdown-item" href="/admin/plots/form_plot.php">Add Plots</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/projects/projects.php">Projects</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/sectors/sectors.php">Sectors</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/streets/streets.php">Streets</a></li>
 
-<li><a class="dropdown-item" href="/real_estate_esystem/admin/projects/projects.php">Projects</a></li>
-<li><a class="dropdown-item" href="/real_estate_esystem/admin/sectors/sectors.php">Sectors</a></li>
-<li><a class="dropdown-item" href="/real_estate_esystem/admin/streets/streets.php">Streets</a></li>
-
-<li><a class="dropdown-item" href="/real_estate_esystem/admin/plot_sizes/plot_size_list.php">Plot Size Categories</a></li>
-<li><a class="dropdown-item" href="/real_estate_esystem/admin/charges/charges.php">Charges</a></li>
-<li><a class="dropdown-item" href="/real_estate_esystem/admin/property_type/property_type.php">Property Types</a></li>
-
-
-</ul>
-
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/plot_sizes/plot_size_list.php">Plot Size Categories</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/charges/charges.php">Charges</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/property_type/property_type.php">Property Types</a></li>
+          </ul>
         </li>
 
         <!-- MEMBERS -->
@@ -77,7 +75,7 @@
           </ul>
         </li>
 
-        <!-- MEDIA MANAGEMENT -->
+        <!-- MEDIA -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
             Media
@@ -88,10 +86,24 @@
             <li><a class="dropdown-item" href="/real_estate_esystem/admin/sales_centers/sale_center_list.php">Sales Center</a></li>
           </ul>
         </li>
-
-     
+        
 
       </ul>
+
+      <!-- RIGHT SIDE USER MENU -->
+      <?php if(isset($_SESSION['username'])) { ?>
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle fw-bold" href="#" data-bs-toggle="dropdown">
+             <?php echo $_SESSION['username']; ?>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li><a class="dropdown-item text-danger" href="/real_estate_esystem/admin/logout.php">🚪 Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+      <?php } ?>
+      
     </div>
 
   </div>
