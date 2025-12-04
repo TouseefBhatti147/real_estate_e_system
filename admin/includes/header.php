@@ -3,7 +3,7 @@
   <div class="container-fluid">
 
     <!-- LEFT SIDE -->
-    <a class="navbar-brand fw-bold" href="/admin/index.php">
+    <a class="navbar-brand fw-bold" href="/real_estate_esystem/admin/index.php">
       🏠 Dashboard
     </a>
 
@@ -23,10 +23,10 @@
           </a>
    <ul class="dropdown-menu shadow">
 
-    <li><a class="dropdown-item" href="/admin/plots/plots_list.php">All Plots</a></li>
-    <li><a class="dropdown-item" href="/admin/plots/form_plot.php">Add Plot</a></li>
-    <li><a class="dropdown-item" href="/admin/plots/plots_list.php">Allot Plots</a></li>
-    <li><a class="dropdown-item" href="/admin/plots/plots_list.php">Transfer Plots</a></li>
+    <li><a class="dropdown-item" href="/real_estate_esystem/admin/plots/plots_list.php">All Plots</a></li>
+    <li><a class="dropdown-item" href="/real_estate_esystem/admin/plots/form_plot.php">Add Plot</a></li>
+    <li><a class="dropdown-item" href="/real_estate_esystem/admin/memberplot/memberplot_list.php">Assign/Allot Plots</a></li>
+    <li><a class="dropdown-item" href="/real_estate_esystem/admin/transfer/transfer_list.php">Transfer Plots</a></li>
 
 </ul>
 
@@ -39,16 +39,16 @@
           </a>
          <ul class="dropdown-menu shadow">
 
-   <li><a class="dropdown-item" href="/admin/plots/plots_list.php">All Plots</a></li>
+   <li><a class="dropdown-item" href="/real_estate_esystem/admin/plots/plots_list.php">All Plots</a></li>
 <li><a class="dropdown-item" href="/admin/plots/form_plot.php">Add Plots</a></li>
 
-<li><a class="dropdown-item" href="/admin/projects/projects.php">Projects</a></li>
-<li><a class="dropdown-item" href="/admin/sectors/sectors.php">Sectors</a></li>
-<li><a class="dropdown-item" href="/admin/streets/streets.php">Streets</a></li>
+<li><a class="dropdown-item" href="/real_estate_esystem/admin/projects/projects.php">Projects</a></li>
+<li><a class="dropdown-item" href="/real_estate_esystem/admin/sectors/sectors.php">Sectors</a></li>
+<li><a class="dropdown-item" href="/real_estate_esystem/admin/streets/streets.php">Streets</a></li>
 
-<li><a class="dropdown-item" href="/admin/plot_sizes/plot_size_list.php">Plot Size Categories</a></li>
-<li><a class="dropdown-item" href="/admin/charges/charges.php">Charges</a></li>
-<li><a class="dropdown-item" href="/admin/property_type/property_type.php">Property Types</a></li>
+<li><a class="dropdown-item" href="/real_estate_esystem/admin/plot_sizes/plot_size_list.php">Plot Size Categories</a></li>
+<li><a class="dropdown-item" href="/real_estate_esystem/admin/charges/charges.php">Charges</a></li>
+<li><a class="dropdown-item" href="/real_estate_esystem/admin/property_type/property_type.php">Property Types</a></li>
 
 
 </ul>
@@ -61,8 +61,8 @@
             Members
           </a>
           <ul class="dropdown-menu shadow">
-            <li><a class="dropdown-item" href="members/member_list.php">Members List</a></li>
-            <li><a class="dropdown-item" href="members/form_member.php">Add Member</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/members/member_list.php">Members List</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/members/form_member.php">Add Member</a></li>
           </ul>
         </li>
 
@@ -72,8 +72,8 @@
             Users
           </a>
           <ul class="dropdown-menu shadow">
-            <li><a class="dropdown-item" href="users/user_list.php">Users List</a></li>
-            <li><a class="dropdown-item" href="users/form_user.php">Add User</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/users/user_list.php">Users List</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/users/form_user.php">Add User</a></li>
           </ul>
         </li>
 
@@ -83,22 +83,13 @@
             Media
           </a>
           <ul class="dropdown-menu shadow">
-            <li><a class="dropdown-item" href="sliders/slider_list.php">Slider</a></li>
-            <li><a class="dropdown-item" href="news/news_list.php">News</a></li>
-            <li><a class="dropdown-item" href="sales_centers/sale_center_list.php">Sales Center</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/sliders/slider_list.php">Slider</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/news/news_list.php">News</a></li>
+            <li><a class="dropdown-item" href="/real_estate_esystem/admin/sales_centers/sale_center_list.php">Sales Center</a></li>
           </ul>
         </li>
 
-        <!-- REPORTS -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-            Reports
-          </a>
-          <ul class="dropdown-menu shadow">
-            <li><a class="dropdown-item" href="reports/plots_report.php">Plots Report</a></li>
-            <li><a class="dropdown-item" href="reports/receipt_report.php">Receipt Report</a></li>
-          </ul>
-        </li>
+     
 
       </ul>
     </div>

@@ -1,12 +1,14 @@
 <?php
+require_once("../includes/db_connection.php");
 require_once("../classes/User.php");
 
-$db = new mysqli("localhost", "root", "", "rdlpk_db1");
-$userObj = new User($db);
+$pdo = Database::getConnection();
+$userObj = new User($pdo);
 
 $id = $_GET['id'] ?? null;
 $record = $userObj->getUserById($id);
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -50,7 +52,7 @@ $record = $userObj->getUserById($id);
 
             <div class="row">
                 <div class="col-md-3 text-center">
-                    <img src="../../assets/img/user_images/<?= $record['pic'] ?? 'no_image.png' ?>" class="profile-img">
+                    <img src="../../admin/assets/img/user_images/<?= $record['pic'] ?? 'no_image.png' ?>" class="profile-img">
                 </div>
 
                 <div class="col-md-9">

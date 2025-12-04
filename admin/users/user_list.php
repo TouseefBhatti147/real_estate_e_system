@@ -121,7 +121,7 @@ $totalPages = ($totalRows > 0) ? ceil($totalRows / $limit) : 1;
                                     <td><?= $row['id'] ?></td>
 
                                     <td>
-                                        <img src="../../assets/img/user_images/<?= $row['pic'] ?: 'no_image.png' ?>"
+                                        <img src="../../admin/assets/img/user_images/<?= $row['pic'] ?: 'no_image.png' ?>"
                                              class="user-avatar">
                                     </td>
 

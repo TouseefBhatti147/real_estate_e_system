@@ -11,25 +11,30 @@ try {
 }
 
 $userObj = new User($pdo);
-
 $action = $_POST['action'] ?? '';
 
-$uploadDir = realpath(__DIR__ . '/../../assets/img/user_images') . DIRECTORY_SEPARATOR;
-if (!is_dir($uploadDir)) {
-    @mkdir($uploadDir, 0777, true);
+// Correct Upload Directory
+$uploadDir = realpath(__DIR__ . '/../assets/img/user_images');
+if (!$uploadDir) {
+    $uploadDir = __DIR__ . '/../assets/img/user_images';
 }
+$uploadDir .= '/';
 
 function handleUserImage($uploadDir)
 {
     $filename = $_POST['old_pic'] ?? '';
 
     if (!empty($_FILES['pic']['name'])) {
-        $ext = pathinfo($_FILES['pic']['name'], PATHINFO_EXTENSION);
+        $ext = strtolower(pathinfo($_FILES['pic']['name'], PATHINFO_EXTENSION));
         $safeName = 'user_' . time() . '_' . mt_rand(1000, 9999) . '.' . $ext;
 
-        if (move_uploaded_file($_FILES['pic']['tmp_name'], $uploadDir . $safeName)) {
-            $filename = $safeName;
+        $destination = $uploadDir . $safeName;
+
+        if (!move_uploaded_file($_FILES['pic']['tmp_name'], $destination)) {
+            die("Image upload failed.");
         }
+
+        $filename = $safeName;
     }
 
     return $filename;
@@ -58,7 +63,7 @@ switch ($action) {
         ];
 
         if ($userObj->create($data)) {
-            header("Location: user_list.php?msg=User+added+successfully");
+            header("Location: user_list.php?msg=User+added");
         } else {
             header("Location: form_user.php?error=Add+failed");
         }
@@ -76,7 +81,7 @@ switch ($action) {
             'email'      => $_POST['email'] ?? '',
             'mobile'     => $_POST['mobile'] ?? '',
             'username'   => $_POST['username'] ?? '',
-            'password'   => $_POST['password'] ?? '', // optional
+            'password'   => $_POST['password'] ?? '',
             'status'     => $_POST['status'] ?? '1',
             'pic'        => $pic,
             'cnic'       => $_POST['cnic'] ?? '',
@@ -86,7 +91,7 @@ switch ($action) {
         ];
 
         if ($userObj->update($data)) {
-            header("Location: user_list.php?msg=User+updated+successfully");
+            header("Location: user_list.php?msg=User+updated");
         } else {
             header("Location: form_user.php?id=" . (int)$data['id'] . "&error=Update+failed");
         }

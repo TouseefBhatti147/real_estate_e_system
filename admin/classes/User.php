@@ -10,70 +10,68 @@ class User
     }
 
     // ---------------- LOGIN ----------------
-  public function login($username, $password)
+    public function login($username, $password)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE username = ? AND password = ? LIMIT 1";
+        $sql = "SELECT * FROM {$this->table} WHERE username = ? LIMIT 1";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$username, $password]);
+        $stmt->execute([$username]);
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user) {
+        if ($user && password_verify($password, $user['password'])) {
             return $user;
         }
 
         return false;
     }
 
-    // ---------------- GET ALL USERS (PDO) ----------------
+    // ---------------- GET ALL USERS ----------------
     public function getAllUsers($search = "", $limit = 20, $offset = 0)
     {
-        $where = "";
-        $params = [];
-
         if (!empty($search)) {
-            $where = "WHERE firstname LIKE ? OR lastname LIKE ? OR username LIKE ?";
-            $searchParam = "%$search%";
-            $params = [$searchParam, $searchParam, $searchParam];
+            $sql = "SELECT * FROM {$this->table}
+                    WHERE firstname LIKE ? OR lastname LIKE ? OR username LIKE ?
+                    ORDER BY id DESC
+                    LIMIT $limit OFFSET $offset";
+
+            $searchLike = "%$search%";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$searchLike, $searchLike, $searchLike]);
+
+        } else {
+            $sql = "SELECT * FROM {$this->table}
+                    ORDER BY id DESC
+                    LIMIT $limit OFFSET $offset";
+
+            $stmt = $this->conn->query($sql);
         }
-
-        $sql = "
-            SELECT * FROM {$this->table}
-            $where
-            ORDER BY id DESC
-            LIMIT $limit OFFSET $offset
-        ";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // ---------------- TOTAL COUNT ----------------
+    // ---------------- COUNT USERS ----------------
     public function getTotalUsers($search = "")
     {
-        $where = "";
-        $params = [];
-
         if (!empty($search)) {
-            $where = "WHERE firstname LIKE ? OR lastname LIKE ? OR username LIKE ?";
-            $searchParam = "%$search%";
-            $params = [$searchParam, $searchParam, $searchParam];
+            $sql = "SELECT COUNT(*) AS total FROM {$this->table}
+                    WHERE firstname LIKE ? OR lastname LIKE ? OR username LIKE ?";
+            $stmt = $this->conn->prepare($sql);
+
+            $searchLike = "%$search%";
+            $stmt->execute([$searchLike, $searchLike, $searchLike]);
+
+        } else {
+            $sql = "SELECT COUNT(*) AS total FROM {$this->table}";
+            $stmt = $this->conn->query($sql);
         }
 
-        $sql = "SELECT COUNT(*) AS total FROM {$this->table} $where";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params);
-
-        return (int) $stmt->fetchColumn();
+        return (int)$stmt->fetchColumn();
     }
 
     // ---------------- GET SINGLE USER ----------------
     public function getUserById($id)
     {
-        $stmt = $this->conn->prepare("SELECT * FROM {$this->table} WHERE id=?");
+        $stmt = $this->conn->prepare("SELECT * FROM {$this->table} WHERE id = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -84,17 +82,28 @@ class User
         $hash = password_hash($data['password'], PASSWORD_BCRYPT);
 
         $sql = "INSERT INTO {$this->table}
-            (firstname, middelname, lastname, pic, sodowo, cnic, address, 
-             city_id, email, country_id, mobile, username, password, 
-             password1, status, skey, login_status, create_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', ?, '', '0', NOW())";
+            (firstname, middelname, lastname, pic, sodowo, cnic, address,
+             city_id, email, country_id, mobile, username, password, status,
+             login_status, create_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0', NOW())";
 
         $stmt = $this->conn->prepare($sql);
 
         return $stmt->execute([
-            $data['firstname'], $data['middelname'], $data['lastname'], $data['pic'],
-            $data['sodowo'], $data['cnic'], $data['address'], $data['city_id'], $data['email'],
-            $data['country_id'], $data['mobile'], $data['username'], $hash, $data['status']
+            $data['firstname'],
+            $data['middelname'],
+            $data['lastname'],
+            $data['pic'],
+            $data['sodowo'],
+            $data['cnic'],
+            $data['address'],
+            $data['city_id'],
+            $data['email'],
+            $data['country_id'],
+            $data['mobile'],
+            $data['username'],
+            $hash,
+            $data['status']
         ]);
     }
 
@@ -102,27 +111,30 @@ class User
     public function update($data)
     {
         if (!empty($data['password'])) {
+
             $hash = password_hash($data['password'], PASSWORD_BCRYPT);
 
             $sql = "UPDATE {$this->table}
                     SET firstname=?, middelname=?, lastname=?, pic=?, sodowo=?, cnic=?, 
-                        address=?, city_id=?, email=?, country_id=?, mobile=?, 
-                        username=?, password=?, status=?
+                        address=?, city_id=?, email=?, country_id=?, mobile=?, username=?, 
+                        password=?, status=?
                     WHERE id=?";
-            
+
             $params = [
                 $data['firstname'], $data['middelname'], $data['lastname'], $data['pic'],
                 $data['sodowo'], $data['cnic'], $data['address'], $data['city_id'],
                 $data['email'], $data['country_id'], $data['mobile'], $data['username'],
                 $hash, $data['status'], $data['id']
             ];
+
         } else {
+
             $sql = "UPDATE {$this->table}
                     SET firstname=?, middelname=?, lastname=?, pic=?, sodowo=?, cnic=?, 
-                        address=?, city_id=?, email=?, country_id=?, mobile=?, 
-                        username=?, status=?
+                        address=?, city_id=?, email=?, country_id=?, mobile=?, username=?, 
+                        status=?
                     WHERE id=?";
-            
+
             $params = [
                 $data['firstname'], $data['middelname'], $data['lastname'], $data['pic'],
                 $data['sodowo'], $data['cnic'], $data['address'], $data['city_id'],

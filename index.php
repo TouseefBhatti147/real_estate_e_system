@@ -15,28 +15,18 @@ if (!$conn) {
 ------------------------------------- */
 $sliderQuery = "SELECT * FROM slider ORDER BY id DESC";
 $sliderResult = mysqli_query($conn, $sliderQuery);
-if (!$sliderResult) {
-    die("Slider Query Error: " . mysqli_error($conn));
-}
 
 /* ------------------------------------
    FETCH PROJECTS (Top 3 Active)
 ------------------------------------- */
 $projectQuery = "SELECT * FROM projects WHERE status = 1 ORDER BY id DESC LIMIT 3";
 $projectResult = mysqli_query($conn, $projectQuery);
-if (!$projectResult) {
-    die("Projects Query Error: " . mysqli_error($conn));
-}
 
 /* ------------------------------------
    FETCH NEWS (Latest 5 Active)
 ------------------------------------- */
 $newsQuery = "SELECT * FROM latest_news WHERE status = 'active' ORDER BY id DESC LIMIT 5";
 $newsResult = mysqli_query($conn, $newsQuery);
-if (!$newsResult) {
-    die("News Query Error: " . mysqli_error($conn));
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -45,6 +35,26 @@ if (!$newsResult) {
 <head>
     <title>Real Estate E-System - Explore Homes, Live Better</title>
     <?php require("header.php"); ?>
+
+<style>
+/* FIX PROJECT IMAGE HEIGHT */
+.destination-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* FIX SLIDER IMAGE SIZE */
+.heroCarousel .carousel-item img {
+    width: 100%;
+    height: 450px !important;
+    object-fit: cover !important;
+    border-radius: 10px;
+}
+
+</style>
+
 </head>
 
 <body>
@@ -70,18 +80,18 @@ if (!$newsResult) {
 
             <!-- RIGHT: DYNAMIC SLIDER -->
             <div class="col-md-6">
-                <div id="heroCarousel" class="heroCarousel carousel slide" data-bs-ride="carousel">
+                <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
 
                     <!-- Indicators -->
                     <div class="carousel-indicators">
                     <?php 
-                    $i = 0;
                     mysqli_data_seek($sliderResult, 0);
+                    $i = 0;
                     while ($slide = mysqli_fetch_assoc($sliderResult)) { ?>
-                        <button type="button" 
-                                data-bs-target="#heroCarousel" 
-                                data-bs-slide-to="<?php echo $i; ?>" 
-                                class="<?php echo ($i == 0 ? 'active' : ''); ?>">
+                        <button type="button"
+                            data-bs-target="#heroCarousel"
+                            data-bs-slide-to="<?= $i ?>"
+                            class="<?= ($i == 0 ? 'active' : '') ?>">
                         </button>
                     <?php $i++; } ?>
                     </div>
@@ -92,11 +102,9 @@ if (!$newsResult) {
                     mysqli_data_seek($sliderResult, 0);
                     $i = 0;
                     while ($slide = mysqli_fetch_assoc($sliderResult)) { ?>
-                        <div class="carousel-item <?php echo ($i == 0 ? 'active' : ''); ?>">
-                            <img src="/admin/assets/img/slider_images/<?php echo $slide['image']; ?>" 
-     class="d-block w-100 rounded" 
-     alt="<?php echo $slide['title']; ?>">
-
+                        <div class="carousel-item <?= ($i == 0 ? 'active' : '') ?>">
+                            <img src="admin/assets/img/slider_images/<?= $slide['image']; ?>"
+                                 alt="<?= $slide['title']; ?>">
                         </div>
                     <?php $i++; } ?>
                     </div>
@@ -107,7 +115,6 @@ if (!$newsResult) {
         </div>
     </div>
 </section>
-
 
 
 <!-- SERVICES SECTION -->
@@ -153,7 +160,6 @@ if (!$newsResult) {
 </section>
 
 
-
 <!-- TOP PROJECTS -->
 <section class="destinations text-center mt-5">
     <div class="container">
@@ -162,32 +168,25 @@ if (!$newsResult) {
 
         <div class="row g-4">
         <?php while ($p = mysqli_fetch_assoc($projectResult)) { ?>
-
             <div class="col-md-4">
                 <div class="card destination-card">
-                    <img src="uploads/projects/<?php echo $p['project_images']; ?>" 
-                         class="card-img-top" alt="">  
-
+                    <img src="admin/assets/img/projects/<?= $p['project_images']; ?>" class="card-img-top" alt="">
+                    src="admin/assets/img/slider_images/<?= $slide['image']; ?>"
                     <div class="card-body">
-                        <h5><?php echo $p['project_name']; ?></h5>
+                        <h5><?= $p['project_name']; ?></h5>
                         <p class="text-muted">
-                            <?php echo substr($p['teaser'], 0, 100); ?>...
+                            <?= substr($p['teaser'], 0, 100); ?>...
                             <br>
-                            <a href="project-details.php?id=<?php echo $p['id']; ?>">
-                                More Details
-                            </a>
+                            <a href="project-details.php?id=<?= $p['id']; ?>">More Details</a>
                         </p>
                     </div>
                 </div>
             </div>
-
         <?php } ?>
         </div>
 
     </div>
 </section>
-
-
 
 
 <!-- LATEST NEWS -->
@@ -201,13 +200,12 @@ if (!$newsResult) {
                 <div class="card p-3 shadow-sm">
 
                     <small class="text-muted">
-                        <?php echo date("d M Y", strtotime($n['create_date'])); ?>
+                        <?= date("d M Y", strtotime($n['create_date'])); ?>
                     </small>
 
-                    <h5 class="mt-2"><?php echo substr($n['teaser'], 0, 70); ?>...</h5>
+                    <h5 class="mt-2"><?= substr($n['teaser'], 0, 70); ?>...</h5>
 
-                    <a href="news-details.php?id=<?php echo $n['id']; ?>" 
-                       class="mt-3 d-block">
+                    <a href="news-details.php?id=<?= $n['id']; ?>" class="mt-3 d-block">
                        Read More →
                     </a>
                 </div>
@@ -217,7 +215,6 @@ if (!$newsResult) {
 
     </div>
 </section>
-
 
 
 <!-- SUBSCRIBE -->
@@ -240,6 +237,10 @@ if (!$newsResult) {
 
 <!-- FOOTER -->
 <?php require("footer.php"); ?>
+
+<!-- IMPORTANT: BOOTSTRAP JS (REQUIRED FOR SLIDER TO WORK) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <?php require("script.php"); ?>
 
 </body>
