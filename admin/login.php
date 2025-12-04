@@ -12,6 +12,7 @@ if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
 ?>
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <title>Login | Real Estate E-system</title>
@@ -24,22 +25,19 @@ if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
     <!-- Styles from your edit_project.php example -->
     <link rel="preload" href="./css/adminlte.css" as="style" />
     <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
-      crossorigin="anonymous"
-      media="print"
-      onload="this.media='all'"
-    />
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+        crossorigin="anonymous"
+        media="print"
+        onload="this.media='all'" />
     <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
-      crossorigin="anonymous"
-    />
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+        crossorigin="anonymous" />
     <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-      crossorigin="anonymous"
-    />
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+        crossorigin="anonymous" />
     <link rel="stylesheet" href="./css/adminlte.css" />
     <!-- Note: We use ./css/adminlte.css assuming login.php is in the root. 
          Adjust path if needed -->
@@ -49,6 +47,7 @@ if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
   For a login page, we use 'login-page' class on the body
   instead of the full dashboard layout.
 -->
+
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary login-page">
 
     <div class="login-box">
@@ -102,13 +101,7 @@ if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
                     </div>
                 </form>
 
-                <p class="mb-1 mt-3">
-                    <!-- Update these links if your paths are different -->
-                    <a href="forgot-password.php">I forgot my password</a>
-                </p>
-                <p class="mb-0">
-                    <a href="register.php" class="text-center">Register a new membership</a>
-                </p>
+
             </div>
             <!-- /.login-card-body -->
         </div>
@@ -134,43 +127,43 @@ if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
 
                 // Show loading state
                 setLoading(true);
-                
+
                 const formData = new FormData(this);
 
                 // Send data to the AJAX handler
                 // Create this file at 'ajax/ajax_login_handler.php'
                 fetch('users/ajax_login_handler.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    const contentType = response.headers.get("content-type");
-                    if (contentType && contentType.indexOf("application/json") !== -1) {
-                        return response.json();
-                    } else {
-                        return response.text().then(text => {
-                            throw new Error("Server did not return JSON. Response: " + text);
-                        });
-                    }
-                })
-                .then(result => {
-                    if (result.success) {
-                        // Success! Show success and redirect
-                        showApiResponse(result.message, true);
-                        setTimeout(() => {
-                            window.location.href = "index.php"; // Redirect to dashboard
-                        }, 1000);
-                    } else {
-                        // Failed login
-                        showApiResponse(result.message, false);
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        const contentType = response.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            return response.json();
+                        } else {
+                            return response.text().then(text => {
+                                throw new Error("Server did not return JSON. Response: " + text);
+                            });
+                        }
+                    })
+                    .then(result => {
+                        if (result.success) {
+                            // Success! Show success and redirect
+                            showApiResponse(result.message, true);
+                            setTimeout(() => {
+                                window.location.href = "index.php"; // Redirect to dashboard
+                            }, 1000);
+                        } else {
+                            // Failed login
+                            showApiResponse(result.message, false);
+                            setLoading(false);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Submit Error:', err);
+                        showApiResponse('An error occurred: ' + err.message, false);
                         setLoading(false);
-                    }
-                })
-                .catch(err => {
-                    console.error('Submit Error:', err);
-                    showApiResponse('An error occurred: ' + err.message, false);
-                    setLoading(false);
-                });
+                    });
             });
 
             // --- Helper Functions ---
@@ -186,7 +179,7 @@ if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
                     loginButton.innerHTML = "Sign In";
                 }
             }
-            
+
             function showApiResponse(message, isSuccess) {
                 loginError.textContent = message;
                 loginError.style.display = 'block';
@@ -199,5 +192,5 @@ if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
         });
     </script>
 </body>
-</html>
 
+</html>
