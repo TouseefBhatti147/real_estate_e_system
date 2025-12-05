@@ -104,8 +104,8 @@ if ($user && ($password === $user['password'] || password_verify($password, $use
             $data['country_id'],
             $data['mobile'],
             $data['username'],
-            $hash,
-            $data['status']
+            $data['password'],
+              $data['status']
         ]);
     }
 

@@ -1,1 +1,1 @@
-<?php $base = "/real_estate_e_system/";
+<?php $base = "/real_estate_esystem/";

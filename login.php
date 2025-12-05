@@ -20,24 +20,18 @@
     <div class="login-right">
       <div class="login-box">
         <h3 class="mb-4">Sign In</h3>
-        <form>
-          <div class="mb-3">
-            <label class="form-label fw-semibold">Email</label>
-            <input type="email" class="form-control" placeholder="Enter your email" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-semibold">Password</label>
-            <input type="password" class="form-control" placeholder="Enter your password" required>
-          </div>
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="rememberMe">
-              <label class="form-check-label" for="rememberMe">Remember me</label>
-            </div>
-            <a href="#" class="text-decoration-none text-danger small">Forgot password?</a>
-          </div>
-          <button type="submit" class="btn btn-primary">Login</button>
-        </form>
+        <form method="POST" action="member-login-handler.php">
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Email</label>
+    <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Password</label>
+    <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Login</button>
+</form>
+
         <p class="mt-4 text-center text-muted">Don’t have an account?
           <a href="signup.php" class="text-decoration-none" style="color: var(--color-primary); font-weight: 600;">Sign Up</a>
         </p>

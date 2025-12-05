@@ -1,11 +1,14 @@
-<?php session_start(); ?>
+<?php session_start();
+?>
 <!doctype html>
 <html lang="en">
 
 <head>
     <title>Real Estate E-system</title>
     <meta name="description" content="Admin Dashboard..." />
-    <?php include("../../admin/includes/headerLinks.php"); ?>
+        <?php require("../../admin/includes/headerLinks.php"); ?>
+
+
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -22,7 +25,7 @@
                 </a>
             </div>
 
-            <?php include("../../admin/includes/sidebar.php"); ?>
+            <?php include("../../sidebar-client.php"); ?>
         </aside>
 
         <main class="app-main">

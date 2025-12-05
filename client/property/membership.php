@@ -7,13 +7,15 @@
 <head>
     <title>Real Estate E-system</title>
     <meta name="description" content="Admin Dashboard..." />
-    <?php include("../../includes/headerLinks.php"); ?>
+    <?php include("../../admin/includes/headerLinks.php"); ?>
+
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
         <!-- Header -->
-        <?php require("../../includes/header.php"); ?>
+
+                <?php require("../../header-client.php"); ?>
 
         <!-- Sidebar  client = bg-light-subtle, data-bs-theme= light , dark = bg-body-secondary , data-bs-theme= dark -->
         <aside class="app-sidebar  bg-light-subtle shadow" data-bs-theme="light">
@@ -22,7 +24,7 @@
                     <span class="brand-text fw-light">Real Estate E-System</span>
                 </a>
             </div>
-            <?php include("../../includes/sidebar.php"); ?>
+            <?php include("../../sidebar-client.php"); ?>
         </aside>
 
         <!-- Main Content -->
@@ -105,10 +107,11 @@
 
 
         <!-- Footer -->
-        <?php include("../../includes/footer.php"); ?>
+
+        <?php include("../../admin/includes/footer.php"); ?>
     </div>
 
-    <?php include("../../includes/scripts.php"); ?>
+        <?php include("../../admin/includes/scripts.php"); ?>
 
 </body>
 

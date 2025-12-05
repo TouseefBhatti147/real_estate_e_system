@@ -81,16 +81,7 @@
                             </a>
                         </div>
 
-                        <div class="col-md-3">
-                            <a class="a" href="charges/charges.php">
-                                <div class="info-box">
-                                    <span class="info-box-icon"><i class="bi bi-cash-coin"></i></span>
-                                    <div class="info-box-content">
-                                        <span class="info-box-text">Charges</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
+                       
 
                         <div class="col-md-3">
                             <a class="a" href="plot_sizes/plot_size_list.php">

@@ -37,7 +37,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     <span class="brand-text fw-light">Real Estate E-System</span>
                 </a>
             </div>
-            <?php include("includes/sidebar.php"); ?>
         </aside>
 
         <!-- Main Content -->

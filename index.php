@@ -171,7 +171,7 @@ $newsResult = mysqli_query($conn, $newsQuery);
             <div class="col-md-4">
                 <div class="card destination-card">
                     <img src="admin/assets/img/projects/<?= $p['project_images']; ?>" class="card-img-top" alt="">
-                    src="admin/assets/img/slider_images/<?= $slide['image']; ?>"
+                    
                     <div class="card-body">
                         <h5><?= $p['project_name']; ?></h5>
                         <p class="text-muted">

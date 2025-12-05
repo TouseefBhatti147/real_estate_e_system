@@ -11,15 +11,15 @@ include __DIR__ . '/config.php';
 <meta name="keywords" content="bootstrap 5, admin dashboard, accessible, WCAG" />
 <meta name="supported-color-schemes" content="light dark" />
 
-<link rel="preload" href="<?= $base ?>css/adminlte.css" as="style" />
+<link rel="preload" href="<?= $base ?>admin/css/adminlte.css" as="style" />
 
 <link rel="stylesheet"
-    href="<?= $base ?>css/font-family.css"
+    href="<?= $base ?>admin/css/font-family.css"
     crossorigin="anonymous"
     media="print"
     onload="this.media='all'" />
 
-<link rel="stylesheet" href="<?= $base ?>css/overlayscrollbars.min.css" crossorigin="anonymous" />
-<link rel="stylesheet" href="<?= $base ?>css/bootstrap-icons.min.css" crossorigin="anonymous" />
-<link rel="stylesheet" href="<?= $base ?>css/adminlte.css" />
-<link rel="stylesheet" href="<?= $base ?>css/apexcharts.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="<?= $base ?>admin/css/overlayscrollbars.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="<?= $base ?>admin/css/bootstrap-icons.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="<?= $base ?>admin/css/adminlte.css" />
+<link rel="stylesheet" href="<?= $base ?>admin/css/apexcharts.css" crossorigin="anonymous" />

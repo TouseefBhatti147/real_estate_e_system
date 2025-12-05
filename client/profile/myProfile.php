@@ -21,7 +21,7 @@
                     <span class="brand-text fw-light">Real Estate E-System</span>
                 </a>
             </div>
-            <?php include("../../admin/includes/sidebar.php"); ?>
+           <?php include("../../sidebar-client.php"); ?>
         </aside>
 
         <!-- Main Content -->
