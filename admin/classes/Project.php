@@ -1,22 +1,16 @@
 <?php
 class Project {
+
     private $conn;
 
     public function __construct($db) {
         $this->conn = $db;
     }
 
-    // -------------------
-    // Add new project
-    // -------------------
+    /* =========================================================
+       ADD PROJECT
+    ========================================================= */
     public function addProject($data) {
-        $project_name    = $data['project_name'];
-        $teaser          = $data['teaser'];
-        $project_url     = $data['project_url'];
-        $project_details = $data['project_details'];
-        $status          = intval($data['status']);
-        $project_images  = $data['project_images']; // JSON string of images
-        $project_map     = $data['project_map'];    // string path
 
         $stmt = $this->conn->prepare("
             INSERT INTO projects 
@@ -24,114 +18,123 @@ class Project {
             VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
         ");
 
-        if(!$stmt) return ['success'=>false,'message'=>$this->conn->error];
+        $stmt->bind_param(
+            "ssssiss",
+            $data['project_name'],
+            $data['teaser'],
+            $data['project_url'],
+            $data['project_details'],
+            $data['status'],
+            $data['project_images'],
+            $data['project_map']
+        );
 
-        $stmt->bind_param('ssssiss', $project_name, $teaser, $project_url, $project_details, $status, $project_images, $project_map);
-
-        if($stmt->execute()) {
-            $stmt->close();
-            return ['success'=>true,'message'=>'Project added successfully.'];
-        } else {
-            $stmt->close();
-            return ['success'=>false,'message'=>'Add failed: '.$this->conn->error];
+        if ($stmt->execute()) {
+            return ['success'=>true,'message'=>'Project added successfully'];
         }
+
+        return ['success'=>false,'message'=>'Add failed: '.$stmt->error];
     }
 
-    // -------------------
-    // Update existing project
-    // -------------------
-    public function updateProject($id, $data) {
-        $id              = intval($id);
-        $project_name    = $data['project_name'];
-        $teaser          = $data['teaser'];
-        $project_url     = $data['project_url'];
-        $project_details = $data['project_details'];
-        $status          = intval($data['status']);
-        $project_images  = $data['project_images']; // can be same as old JSON or new
-        $project_map     = $data['project_map'];    // new path or old
+    /* =========================================================
+       UPDATE PROJECT
+    ========================================================= */
+    public function updateProject($id, $data, $oldData, $deleteOldImage, $deleteOldMap) {
+
+        // Delete old image
+        if ($deleteOldImage && !empty($oldData['project_images'])) {
+            $oldFile = __DIR__ . "/../assets/img/projects/" . $oldData['project_images'];
+            if (file_exists($oldFile)) unlink($oldFile);
+        }
+
+        // Delete old map
+        if ($deleteOldMap && !empty($oldData['project_map'])) {
+            $oldFile = __DIR__ . "/../assets/img/projects/" . $oldData['project_map'];
+            if (file_exists($oldFile)) unlink($oldFile);
+        }
 
         $stmt = $this->conn->prepare("
-            UPDATE projects 
+            UPDATE projects
             SET project_name=?, teaser=?, project_url=?, project_details=?, status=?, project_images=?, project_map=?
             WHERE id=?
         ");
 
-        if(!$stmt) return ['success'=>false,'message'=>$this->conn->error];
+        $stmt->bind_param(
+            "ssssissi",
+            $data['project_name'],
+            $data['teaser'],
+            $data['project_url'],
+            $data['project_details'],
+            $data['status'],
+            $data['project_images'],
+            $data['project_map'],
+            $id
+        );
 
-        $stmt->bind_param('ssssissi', $project_name, $teaser, $project_url, $project_details, $status, $project_images, $project_map, $id);
-
-        if($stmt->execute()) {
-            $stmt->close();
-            return ['success'=>true,'message'=>'Project updated successfully.'];
-        } else {
-            $stmt->close();
-            return ['success'=>false,'message'=>'Update failed: '.$this->conn->error];
+        if ($stmt->execute()) {
+            return ['success'=>true,'message'=>'Project updated successfully'];
         }
+
+        return ['success'=>false,'message'=>'Update failed: '.$stmt->error];
     }
 
-    // -------------------
-    // Delete project
-    // -------------------
+    /* =========================================================
+       DELETE PROJECT
+    ========================================================= */
     public function deleteProject($id) {
-        $id = intval($id);
 
-        // First get current images and map to delete files if needed
         $stmt = $this->conn->prepare("SELECT project_images, project_map FROM projects WHERE id=?");
-        $stmt->bind_param('i', $id);
+        $stmt->bind_param("i", $id);
         $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
+        $data = $stmt->get_result()->fetch_assoc();
 
-        if($result) {
-            // Delete images
-            $images = json_decode($result['project_images'], true);
-            if($images && is_array($images)) {
-                foreach($images as $img) {
-                    $path = __DIR__ . '/../' . $img;
-                    if(file_exists($path)) unlink($path);
-                }
+        if ($data) {
+            if (!empty($data['project_images'])) {
+                $file = __DIR__ . "/../assets/img/projects/" . $data['project_images'];
+                if (file_exists($file)) unlink($file);
             }
-            // Delete map
-            if(!empty($result['project_map'])) {
-                $mapPath = __DIR__ . '/../' . $result['project_map'];
-                if(file_exists($mapPath)) unlink($mapPath);
+
+            if (!empty($data['project_map'])) {
+                $file = __DIR__ . "/../assets/img/projects/" . $data['project_map'];
+                if (file_exists($file)) unlink($file);
             }
         }
 
-        // Delete project record
         $stmt = $this->conn->prepare("DELETE FROM projects WHERE id=?");
-        $stmt->bind_param('i', $id);
+        $stmt->bind_param("i", $id);
 
-        if($stmt->execute()) {
-            $stmt->close();
-            return ['success'=>true,'message'=>'Project deleted successfully.'];
-        } else {
-            $stmt->close();
-            return ['success'=>false,'message'=>'Delete failed: '.$this->conn->error];
+        if ($stmt->execute()) {
+            return ['success'=>true,'message'=>'Project deleted successfully'];
         }
+
+        return ['success'=>false,'message'=>'Delete failed'];
     }
 
-    // -------------------
-    // Fetch all projects
-    // -------------------
-    public function getAllProjects() {
-        $result = $this->conn->query("SELECT * FROM projects ORDER BY id DESC");
-        if(!$result) return ['success'=>false,'message'=>$this->conn->error,'data'=>[]];
-        $projects = [];
-        while($row = $result->fetch_assoc()) $projects[] = $row;
-        return ['success'=>true,'data'=>$projects];
-    }
-
-    // -------------------
-    // Fetch single project
-    // -------------------
+    /* =========================================================
+       GET ONE PROJECT
+    ========================================================= */
     public function getProject($id) {
         $stmt = $this->conn->prepare("SELECT * FROM projects WHERE id=?");
-        $stmt->bind_param('i',$id);
+        $stmt->bind_param("i",$id);
         $stmt->execute();
         $res = $stmt->get_result();
-        $stmt->close();
-        if($res && $res->num_rows>0) return ['success'=>true,'data'=>$res->fetch_assoc()];
+
+        if ($res->num_rows > 0) {
+            return ['success'=>true,'data'=>$res->fetch_assoc()];
+        }
+
         return ['success'=>false,'message'=>'Project not found'];
+    }
+
+    /* =========================================================
+       GET ALL PROJECTS
+    ========================================================= */
+    public function getAllProjects() {
+        $result = $this->conn->query("SELECT * FROM projects ORDER BY id DESC");
+        $rows = [];
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
+        return ['success'=>true,'data'=>$rows];
     }
 }

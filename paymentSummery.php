@@ -6,7 +6,7 @@
 <head>
     <title>Real Estate E-system</title>
     <meta name="description" content="Admin Dashboard..." />
-        <?php require("../../admin/includes/headerLinks.php"); ?>
+        <?php require("./admin/includes/headerLinks.php"); ?>
 
 
 </head>
@@ -15,7 +15,7 @@
     <div class="app-wrapper">
 
         <!-- Header -->
-        <?php require("../../admin/includes/header.php"); ?>
+        <?php require("./admin/includes/header.php"); ?>
 
         <!-- Sidebar -->
         <aside class="app-sidebar bg-light-subtle shadow" data-bs-theme="light">
@@ -25,7 +25,7 @@
                 </a>
             </div>
 
-            <?php include("../../sidebar-client.php"); ?>
+            <?php include("./sidebar-client.php"); ?>
         </aside>
 
         <main class="app-main">

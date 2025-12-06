@@ -8,7 +8,7 @@ if (session_status() === PHP_SESSION_NONE) {
   <div class="container-fluid">
 
     <!-- LEFT SIDE -->
-    <a class="navbar-brand fw-bold" href="/real_estate_esystem/client-dashboard.php">
+    <a class="navbar-brand fw-bold" href="./client-dashboard.php">
       🏠 Dashboard
     </a>
 

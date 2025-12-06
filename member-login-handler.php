@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "./admin/includes/db_connection.php"; // your PDO or mysqli connection
+require_once "./admin/includes/db_connection.php";  
 
 // Validate POST
 if (!isset($_POST['email'], $_POST['password'])) {
@@ -21,16 +21,17 @@ try {
 
     if ($member) {
 
-        // If DB password is plain text
+        // Validate password (plain text OR hashed)
         if ($password === $member['password'] || password_verify($password, $member['password'])) {
 
-         $_SESSION["member_loggedin"] = true;
-$_SESSION["username"] = $member["username"]; // <-- important
-
-
-
-            // Redirect to member dashboard
-            header("Location:client-dashboard.php");
+            // SET MEMBER SESSION VARIABLES
+            $_SESSION["member_loggedin"] = true;
+            $_SESSION["member_id"] = $member["id"];              // REQUIRED
+            $_SESSION["member_name"] = $member["member_name"];   // OPTIONAL (for header)
+            $_SESSION["member_email"] = $member["email"];  
+            $_SESSION["member_name"] = $member["name"];
+            // Redirect to client dashboard
+            header("Location: /real_estate_esystem/client-dashboard.php");
             exit;
         }
     }

@@ -6,6 +6,9 @@ if (!isset($_SESSION["member_loggedin"]) || $_SESSION["member_loggedin"] !== tru
     header("Location: login.php");
     exit;
 }
+
+// Get logged-in member name
+$member_name = $_SESSION["member_name"] ?? "Member";
 ?>
 <!doctype html>
 <html lang="en">
@@ -16,21 +19,20 @@ if (!isset($_SESSION["member_loggedin"]) || $_SESSION["member_loggedin"] !== tru
 
     <!-- CSS Files -->
     <link rel="stylesheet" href="admin/css/adminlte.css">
-<link rel="stylesheet" href="admin/css/font-family.css">
-<link rel="stylesheet" href="admin/css/overlayscrollbars.min.css">
-<link rel="stylesheet" href="admin/css/bootstrap-icons.min.css">
-<link rel="stylesheet" href="admin/css/apexcharts.css">
-
+    <link rel="stylesheet" href="admin/css/font-family.css">
+    <link rel="stylesheet" href="admin/css/overlayscrollbars.min.css">
+    <link rel="stylesheet" href="admin/css/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="admin/css/apexcharts.css">
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
 
 <div class="app-wrapper">
 
-    <!-- Header (SAME ADMIN HEADER) -->
+    <!-- Header -->
     <?php include("./header-client.php"); ?>
 
-    <!-- Sidebar (SAME ADMIN SIDEBAR) -->
+    <!-- Sidebar -->
     <aside class="app-sidebar bg-light-subtle shadow" data-bs-theme="light">
         <div class="sidebar-brand">
             <a href="client-dashboard.php" class="brand-link">
@@ -65,57 +67,48 @@ if (!isset($_SESSION["member_loggedin"]) || $_SESSION["member_loggedin"] !== tru
         <div class="app-content">
             <div class="container-fluid">
 
-                <!-- INFO BOXES -->
-                <div class="row">
 
-                    <div class="col-12 col-sm-6 col-md-3">
+                <!-- ============================= -->
+                <!--   TOP SINGLE INFO BOX         -->
+                <!-- ============================= -->
+                <div class="row mb-3">
+                    <div class="col-12">
                         <div class="info-box">
                             <span class="info-box-icon text-bg-primary shadow-sm">
                                 <i class="bi bi-person-fill"></i>
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Welcome</span>
-                                <span class="info-box-number">
-                                    <?php echo $_SESSION["username"]; ?>
-                                </span>
+                                <span class="info-box-number"><?= htmlspecialchars($member_name); ?></span>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                   
 
+                <!-- ============================= -->
+                <!--   THREE BOXES IN ONE ROW      -->
+                <!-- ============================= -->
+                <div class="row mb-4">
+
+                   <div class="col-12 col-sm-6 col-md-4">
+                <a href="membership.php" class="text-decoration-none">
+                    <div class="info-box">
+                        <span class="info-box-icon text-bg-success shadow-sm">
+                            <i class="bi bi-house-door-fill"></i>
+                        </span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">My Properties</span>
+                            <span class="info-box-number"></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
 
                 </div>
 
-                <!-- TABLE -->
-                <div class="card mb-5">
-                    <div class="card-header">
-                        <h3 class="card-title">My Property Bookings</h3>
-                    </div>
 
-                    <div class="card-body p-0">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Sr#</th>
-                                    <th>Project Name</th>
-                                    <th>Plot No</th>
-                                    <th>Status</th>
-                                    <th>Booking Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="align-middle">
-                                    <td>1</td>
-                                    <td>Dream Valley</td>
-                                    <td>Plot #123</td>
-                                    <td><span class="badge bg-success">Approved</span></td>
-                                    <td>12 Nov 2024</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+
 
             </div>
         </div>
@@ -128,8 +121,7 @@ if (!isset($_SESSION["member_loggedin"]) || $_SESSION["member_loggedin"] !== tru
 </div>
 
 <!-- JS Files -->
-  <?php include("admin/includes/scripts.php"); ?>
-
+<?php include("admin/includes/scripts.php"); ?>
 
 </body>
 </html>

@@ -2,30 +2,38 @@
 <?php
 $projectDataJSON = 'null';
 $pageError = '';
-$projectId = isset($_GET['id']) ? trim($_GET['id']) : null;
-$pageTitle = $projectId ? 'Edit Project' : 'Add New Project';
-$cardTitle = $projectId ? 'Edit Project Details' : 'New Project Information';
-$submitText = $projectId ? 'Update Project' : 'Add Project';
-$cardType = $projectId ? 'card-success' : 'card-primary';
+$projectId = isset($_GET['id']) ? intval($_GET['id']) : null;
 
-// ✅ --- Fetch Real Data from Database ---
+$pageTitle  = $projectId ? 'Edit Project' : 'Add New Project';
+$cardTitle  = $projectId ? 'Edit Project Details' : 'New Project Information';
+$submitText = $projectId ? 'Update Project' : 'Add Project';
+$cardType   = $projectId ? 'card-success' : 'card-primary';
+
+/* -------------------------
+   Fetch project for edit
+------------------------- */
 if ($projectId) {
     $db = new mysqli("localhost", "root", "", "rdlpk_db1");
+
     if ($db->connect_error) {
         $pageError = "Database connection failed: " . $db->connect_error;
     } else {
         $stmt = $db->prepare("SELECT * FROM projects WHERE id = ?");
         $stmt->bind_param("i", $projectId);
         $stmt->execute();
-        $result = $stmt->get_result();
+        $res = $stmt->get_result();
 
-        if ($result && $result->num_rows > 0) {
-            $project = $result->fetch_assoc();
-            $project['project_images'] = $project['project_images'] ?: '[]';
-            $projectDataJSON = json_encode(['success' => true, 'data' => $project]);
+        if ($res && $res->num_rows > 0) {
+            $project = $res->fetch_assoc();
+
+            // Convert single image values properly
+            $projectDataJSON = json_encode([
+                'success' => true,
+                'data' => $project
+            ]);
+
         } else {
-            $pageError = "⚠️ Project not found for ID: " . htmlspecialchars($projectId);
-            $projectDataJSON = json_encode(['success' => false, 'message' => $pageError]);
+            $pageError = "⚠️ Project not found!";
         }
 
         $stmt->close();
@@ -39,219 +47,196 @@ $formDisabled = !empty($pageError);
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Project - <?= $pageTitle ?></title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><?= $pageTitle ?></title>
 <link rel="stylesheet" href="../css/adminlte.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
+
 <style>
 .preview-image {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
+    width: 140px;
+    height: 140px;
     border-radius: 8px;
-    margin: 4px;
-    border: 2px solid #dee2e6;
-    transition: transform 0.2s;
-}
-.preview-image:hover {
-    transform: scale(1.05);
-    border-color: #0d6efd;
+    object-fit: cover;
+    margin: 5px;
+    border: 2px solid #ccc;
 }
 </style>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
 <div class="app-wrapper">
+
 <?php include("../includes/header.php"); ?>
+
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-    <div class="sidebar-brand">
-        <a href="..\index.php" class="brand-link">
-        <span class="brand-text fw-light">Real Estate E-System</span>
-        </a>
-    </div>
     <?php include("../includes/sidebar.php"); ?>
 </aside>
 
 <main class="app-main">
-    <div class="app-content-header mb-4">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-6"><h3><?= $pageTitle ?></h3></div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-end">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active"><?= $pageTitle ?></li>
-                    </ol>
-                </div>
-            </div>
-        </div>
+
+<div class="app-content-header mb-4">
+    <div class="container-fluid">
+        <h3><?= $pageTitle ?></h3>
+    </div>
+</div>
+
+<div class="app-content">
+<div class="container-fluid">
+<div class="row">
+<div class="col-md-12">
+
+<div class="card <?= $cardType ?> shadow-sm">
+<div class="card-header"><h4><?= $cardTitle ?></h4></div>
+
+<form id="projectForm" enctype="multipart/form-data" method="POST">
+
+<div class="card-body">
+
+<div id="apiResponse" class="alert" style="display:none;"></div>
+
+<input type="hidden" id="projectId" name="id" value="<?= $projectId ?>">
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <label class="form-label">Project Name *</label>
+        <input type="text" class="form-control" id="projectName" name="projectName" required>
     </div>
 
-    <div class="app-content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card <?= $cardType ?> mb-4 shadow-sm">
-                        <div class="card-header"><h4><?= $cardTitle ?></h4></div>
-                        <form id="projectForm" enctype="multipart/form-data" method="POST">
-                            <div class="card-body">
-                                <div id="apiResponse" class="alert" style="display:none;"></div>
-                                <?php if($pageError): ?>
-                                <div class="alert alert-danger"><?= $pageError ?></div>
-                                <?php endif; ?>
-
-                                <input type="hidden" name="id" id="projectId" value="<?= htmlspecialchars($projectId ?? '') ?>">
-
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="projectName" class="form-label">Project Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="projectName" name="projectName" required <?= $formDisabled?'disabled':'' ?> >
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="url" class="form-label">Project URL <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="project_url" name="project_url" placeholder="https://example.com" required <?= $formDisabled?'disabled':'' ?> >
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-md-8">
-                                        <label for="teaser" class="form-label">Teaser <span class="text-danger">*</span></label>
-                                        <textarea class="form-control" id="teaser" name="teaser" rows="2" required <?= $formDisabled?'disabled':'' ?> ></textarea>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="status" name="status" required <?= $formDisabled?'disabled':'' ?>>
-                                            <option value="" disabled>Select Status</option>
-                                            <option value="1">Active</option>
-                                            <option value="0">inActive</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="projectDetail" class="form-label">Project Detail <span class="text-danger">*</span></label>
-                                    <textarea class="form-control" id="project_details" name="project_details" rows="5" required <?= $formDisabled?'disabled':'' ?> ></textarea>
-                                </div>
-
-                                <?php if($projectId): ?>
-                                <div class="mb-3">
-                                    <label class="form-label">Current Images</label>
-                                    <div id="currentImagesPreview" class="d-flex flex-wrap"></div>
-                                </div>
-                                <?php endif; ?>
-
-                                <div class="mb-3">
-                                    <label for="projectImages" class="form-label"><?= $projectId?'Upload New Images (Replace All)':'Project Images' ?> <?= $projectId?'':'*' ?></label>
-                                    <input type="file" class="form-control" id="projectImages" name="projectImages[]" multiple <?= $projectId?'':'required' ?> <?= $formDisabled?'disabled':'' ?>>
-                                    <small class="form-text text-muted"><?= $projectId?'Leave blank to keep current images.':'Upload one or more images for the project slider.' ?></small>
-                                </div>
-
-                                <?php if($projectId): ?>
-                                <div class="mb-3">
-                                    <label class="form-label">Current Map</label>
-                                    <div id="currentMapPreview"></div>
-                                </div>
-                                <?php endif; ?>
-
-                                <div class="mb-3">
-                                    <label for="projectMap" class="form-label"><?= $projectId?'Upload New Map':'Project Map' ?> <?= $projectId?'':'*' ?></label>
-                                    <input type="file" class="form-control" id="projectMap" name="projectMap" <?= $projectId?'':'required' ?> <?= $formDisabled?'disabled':'' ?>>
-                                    <small class="form-text text-muted"><?= $projectId?'Leave blank to keep current map.':'Upload a single map image.' ?></small>
-                                </div>
-                            </div>
-
-                            <div class="card-footer text-end">
-                                <button type="submit" id="submitButton" class="btn <?= $projectId?'btn-success':'btn-primary' ?>" <?= $formDisabled?'disabled':'' ?>><?= $submitText ?></button>
-                                <a href="projects.php" class="btn btn-secondary ms-2">Cancel</a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="col-md-6">
+        <label class="form-label">Project URL *</label>
+        <input type="text" class="form-control" id="project_url" name="project_url" required>
     </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-8">
+        <label class="form-label">Teaser *</label>
+        <textarea class="form-control" id="teaser" name="teaser" required></textarea>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Status *</label>
+        <select class="form-select" id="status" name="status" required>
+            <option disabled selected>Select Status</option>
+            <option value="1">Active</option>
+            <option value="0">Inactive</option>
+        </select>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Project Details *</label>
+    <textarea class="form-control" id="project_details" name="project_details" rows="4" required></textarea>
+</div>
+
+<!-- CURRENT PROJECT IMAGE -->
+<?php if ($projectId): ?>
+<div class="mb-3">
+    <label class="form-label">Current Image</label>
+    <div id="currentImagePreview"></div>
+</div>
+<?php endif; ?>
+
+<div class="mb-3">
+    <label class="form-label">Project Image *</label>
+    <input type="file" class="form-control" id="projectImages" name="projectImages">
+</div>
+
+<!-- CURRENT MAP -->
+<?php if ($projectId): ?>
+<div class="mb-3">
+    <label class="form-label">Current Map</label>
+    <div id="currentMapPreview"></div>
+</div>
+<?php endif; ?>
+
+<div class="mb-3">
+    <label class="form-label">Project Map *</label>
+    <input type="file" class="form-control" id="projectMap" name="projectMap">
+</div>
+
+</div>
+
+<div class="card-footer text-end">
+    <button type="submit" id="submitButton" class="btn btn-primary"><?= $submitText ?></button>
+    <a href="projects.php" class="btn btn-secondary">Cancel</a>
+</div>
+
+</form>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+
 </main>
+
 <?php include("../includes/footer.php"); ?>
 </div>
 
 <script>
-const preloadedData = <?= $projectDataJSON ?>;
-const isUpdateMode = <?= $projectId?'true':'false' ?>;
+const preData = <?= $projectDataJSON ?>;
+const updateMode = <?= $projectId ? 'true' : 'false' ?>;
 
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('projectForm');
-    const apiResponseDiv = document.getElementById('apiResponse');
-    const submitButton = document.getElementById('submitButton');
+document.addEventListener("DOMContentLoaded", () => {
 
-    if (isUpdateMode && preloadedData && preloadedData.success && preloadedData.data) {
-        populateForm(preloadedData.data);
-    }
+    if (updateMode && preData.success) fillForm(preData.data);
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        submitButton.disabled = true;
-        submitButton.textContent = isUpdateMode ? 'Updating...' : 'Adding...';
-
-        const formData = new FormData(this);
-        formData.set('action', isUpdateMode ? 'update' : 'add');
-
-        fetch('api_projects.php', { method: 'POST', body: formData })
-        .then(response => response.json())
-        .then(result => {
-            showApiResponse(result.message, result.success);
-            if (result.success) {
-                // ✅ Redirect to project list after successful add/update
-                setTimeout(() => window.location.href = 'projects.php', 1000);
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            showApiResponse('Error: ' + err.message, false);
-        })
-        .finally(() => {
-            submitButton.disabled = false;
-            submitButton.textContent = isUpdateMode ? 'Update Project' : 'Add Project';
-        });
-    });
-
-    function populateForm(data) {
-        document.getElementById('projectName').value = data.project_name || '';
-        document.getElementById('project_url').value = data.project_url || '';
-        document.getElementById('status').value = String(data.status);
-        document.getElementById('teaser').value = data.teaser || '';
-        document.getElementById('project_details').value = data.project_details || '';
-
-        // ✅ Map preview
-        const mapPreview = document.getElementById('currentMapPreview');
-        if (data.project_map && mapPreview) {
-            mapPreview.innerHTML = `<img src="..\\${data.project_map}" class="preview-image">`;
-        }
-
-        // ✅ Images preview
-        const imagesPreview = document.getElementById('currentImagesPreview');
-        if (imagesPreview) {
-            imagesPreview.innerHTML = '';
-            try {
-                const images = JSON.parse(data.project_images);
-                if (images && images.length > 0) {
-                    images.forEach(img => {
-                        imagesPreview.innerHTML += `<img src="..\\${img}" class="preview-image">`;
-                    });
-                } else {
-                    imagesPreview.innerHTML = `<p class="text-muted">No current images.</p>`;
-                }
-            } catch (e) {
-                console.error("Error parsing project images JSON:", e);
-            }
-        }
-    }
-
-    function showApiResponse(message, isSuccess) {
-        apiResponseDiv.textContent = message;
-        apiResponseDiv.style.display = 'block';
-        apiResponseDiv.className = isSuccess ? 'alert alert-success' : 'alert alert-danger';
-    }
+    document.getElementById("projectForm").addEventListener("submit", submitForm);
 });
+
+function fillForm(data) {
+    document.getElementById("projectName").value = data.project_name;
+    document.getElementById("project_url").value = data.project_url;
+    document.getElementById("teaser").value = data.teaser;
+    document.getElementById("status").value = data.status;
+    document.getElementById("project_details").value = data.project_details;
+
+    // Single image preview
+    if (data.project_images) {
+        document.getElementById("currentImagePreview").innerHTML =
+            `<img src="../assets/img/projects/${data.project_images}" class="preview-image">`;
+    }
+
+    // Single map preview
+    if (data.project_map) {
+        document.getElementById("currentMapPreview").innerHTML =
+            `<img src="../assets/img/projects/${data.project_map}" class="preview-image">`;
+    }
+}
+
+function submitForm(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById("submitButton");
+    btn.disabled = true;
+    btn.textContent = "Saving...";
+
+    let form = new FormData(this);
+    form.set("action", updateMode ? "update" : "add");
+
+    fetch("api_projects.php", { method: "POST", body: form })
+        .then(r => r.json())
+        .then(res => {
+            showResponse(res.success, res.message);
+            if (res.success)
+                setTimeout(() => window.location = "projects.php", 800);
+        })
+        .catch(err => showResponse(false, err.message))
+        .finally(() => {
+            btn.disabled = false;
+            btn.textContent = "<?= $submitText ?>";
+        });
+}
+
+function showResponse(success, msg) {
+    const box = document.getElementById("apiResponse");
+    box.style.display = "block";
+    box.className = success ? "alert alert-success" : "alert alert-danger";
+    box.textContent = msg;
+}
 </script>
 </body>
 </html>
